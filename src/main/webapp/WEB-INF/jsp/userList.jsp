@@ -48,6 +48,10 @@
       </tr>
     </c:forEach>
   </table>
+  <form action="userAdd" method="post">
+    <button type="submit">ユーザー新規追加</button>
+  </form>
+  <br>
   <a href="mainMenu">戻る</a>
 </body>
 </html>

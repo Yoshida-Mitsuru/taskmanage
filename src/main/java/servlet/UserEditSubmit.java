@@ -26,7 +26,7 @@ public class UserEditSubmit extends HttpServlet {
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		int role = Integer.parseInt(request.getParameter("role"));
-		
+
 		UsersTableDAO usersTableDAO = new UsersTableDAO();
 		UserBean user = new UserBean(id, password, name, email, role);
 		try {
