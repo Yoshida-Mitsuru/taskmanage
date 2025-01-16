@@ -36,6 +36,7 @@
     </label><br>
     <button type="submit">登録</button>
   </form>
+  <p>${message}</p>
   <a href="userList">ユーザー一覧に戻る</a>
 </body>
 </html>
