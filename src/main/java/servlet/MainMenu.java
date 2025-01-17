@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import dao.TransactionManager;
 import dao.UsersTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -23,9 +24,9 @@ public class MainMenu extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		String id = request.getParameter("id");
 		String pass = request.getParameter("pass");
-		UsersTableDAO usersTableDAO = new UsersTableDAO();
-		UserBean user = new UserBean();
-		try {
+		UserBean user = null;
+		try (TransactionManager trans = new TransactionManager()) {
+			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
 			user = usersTableDAO.find(id, pass);
 		} catch (SQLException e) {
 			String message = "";

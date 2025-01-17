@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import dao.TransactionManager;
 import dao.UsersTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -26,14 +27,16 @@ public class UserEditSubmit extends HttpServlet {
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		int role = Integer.parseInt(request.getParameter("role"));
-
-		UsersTableDAO usersTableDAO = new UsersTableDAO();
 		UserBean user = new UserBean(id, password, name, email, role);
-		try {
+
+		try (TransactionManager trans = new TransactionManager()) {
+			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
 			if(usersTableDAO.update(user)) {
 				message = "正常に登録されました";
+				trans.commit();
 			} else {
 				message = "登録に失敗しました";
+				trans.rollback();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

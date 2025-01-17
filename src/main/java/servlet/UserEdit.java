@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import dao.TransactionManager;
 import dao.UsersTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -21,9 +22,9 @@ public class UserEdit extends HttpServlet {
 		// リクエストパラメータの取得
 		request.setCharacterEncoding("UTF-8");
 		String id = request.getParameter("id");
-		UsersTableDAO usersTableDAO = new UsersTableDAO();
-		UserBean userBean = new UserBean();
-		try {
+		UserBean userBean = null;
+		try (TransactionManager trans = new TransactionManager()) {
+			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
 			userBean = usersTableDAO.find(id);
 		} catch (SQLException e) {
 			e.printStackTrace();

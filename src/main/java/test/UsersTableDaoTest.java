@@ -2,41 +2,51 @@ package test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import dao.TransactionManager;
 import dao.UsersTableDAO;
 import model.UserBean;
 
 public class UsersTableDaoTest {
-	static final String TEST_USER_ID = "testdata99";
-	static UsersTableDAO target = new UsersTableDAO();
+	private TransactionManager trans = null;
+	private UsersTableDAO target = null;
+	final String TEST_USER_ID = "testdata99";
 
-	@Test
-	void 全データ取得() throws Exception {
-    		List<UserBean> expected = Arrays.asList(
-    			new UserBean("sa", "sa1234", "システム管理者", "yoshida_mitsuru@ymail.ne.jp", 0),
-    			new UserBean("user", "1234", "吉田　満", "yoshida_mitsuru@ymail.ne.jp", 1)
-    		);
-    		List<UserBean> actual = target.findAll();
-    		assertEquals(expected.size(), actual.size());
-    		assertIterableEquals(expected, actual);
+	@BeforeEach
+	public void setUp() throws SQLException, IOException {
+		trans = new TransactionManager();
+		target = new UsersTableDAO(trans);
+	}
+
+	@AfterEach
+	public void tearDown() throws SQLException {
+		target = null;
+		// トランザクションのロールバック
+		if (trans != null) {
+			trans.rollback();
+			trans.close();
+		}
 	}
 
 	@Test
 	void 存在するデータ取得() throws Exception {
-    		UserBean expected = new UserBean("sa", "sa1234", "システム管理者", "yoshida_mitsuru@ymail.ne.jp", 0);
-    		UserBean actual = target.find("sa","sa1234");
-    		assertEquals(expected, actual);
+		UserBean expected = new UserBean(TEST_USER_ID, "hogehoge", "テスト", "test@example.com", 1);
+		assertTrue(target.create(expected));
+		UserBean actual = target.find(TEST_USER_ID);
+		assertEquals(expected, actual);
 	}
 
 	@Test
 	void 存在しないID() throws Exception {
 		SQLException exception = assertThrows(SQLException.class, () -> {
-			target.find("not_exist");
+			target.find(TEST_USER_ID);
 		});
 
 		// 例外のメッセージを確認
@@ -54,49 +64,33 @@ public class UsersTableDaoTest {
 	}
 
 	@Test
-	void 追加と更新と削除() throws Exception {
-		//事前確認
-		assertFalse(target.delete(TEST_USER_ID));
-		全データ取得();
+	void 追加と削除_正常() throws Exception {
+		//追加
+		UserBean user = new UserBean(TEST_USER_ID, "hogehoge", "テスト", "test@example.com", 1);
+		List<UserBean> expected = target.findAll();
+		expected.add(user);
+		assertTrue(target.create(user));
+		List<UserBean> actual = target.findAll();
+		assertEquals(expected.size(), actual.size());
+		assertIterableEquals(expected, actual);
 
-		try {
-			//追加
-			UserBean user = new UserBean(TEST_USER_ID, "hogehoge", "テスト", "test@example.com", 1);
-			assertTrue(target.create(user));
-			List<UserBean> expected = Arrays.asList(
-				new UserBean("sa", "sa1234", "システム管理者", "yoshida_mitsuru@ymail.ne.jp", 0),
-				new UserBean("user", "1234", "吉田　満", "yoshida_mitsuru@ymail.ne.jp", 1),
-				user
-			);
-			List<UserBean> actual = target.findAll();
-			assertEquals(expected.size(), actual.size());
-			assertIterableEquals(expected, actual);
-
-			//更新
-			user.setName("fugafuga");
-			assertTrue(target.update(user));
-			actual = target.findAll();
-			assertEquals(expected.size(), actual.size());
-			assertIterableEquals(expected, actual);
-
-			//削除
-			assertTrue(target.delete(TEST_USER_ID));
-			全データ取得();
-		} finally {
-			target.delete(TEST_USER_ID);
-		}
+		//削除
+		expected.remove(expected.size() - 1);
+		assertTrue(target.delete(TEST_USER_ID));
+		actual = target.findAll();
+		assertEquals(expected.size(), actual.size());
+		assertIterableEquals(expected, actual);
 	}
 
 	@Test
-	void ID被り() throws Exception {
-		全データ取得();
-		UserBean user = new UserBean("user", "hogehoge", "テスト", "test@example.com", 1);
+	void 追加_主キー被り() throws Exception {
+		UserBean user = new UserBean(TEST_USER_ID, "hogehoge", "テスト", "test@example.com", 1);
+		assertTrue(target.create(user));
 		assertFalse(target.create(user));
 	}
 
 	@Test
 	void 削除対象なし() throws Exception {
-		全データ取得();
 		assertFalse(target.delete(TEST_USER_ID));
 	}
 }

@@ -1,7 +1,5 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,29 +9,23 @@ import java.util.List;
 import model.UserBean;
 
 public class UsersTableDAO {
-	// データベース接続に使用する情報
-	private final String JDBC_URL = "jdbc:h2:tcp://localhost/~/taskmanage";
-	private final String DB_USER = "sa";
-	private final String DB_PASS = "";
+	private final TransactionManager trans;
+
+	public UsersTableDAO(TransactionManager trans) {
+		super();
+		this.trans = trans;
+	}
 
 	public List<UserBean> findAll() throws SQLException, IllegalStateException {
 		List<UserBean> userList = new ArrayList<UserBean>();
-		// JDBCドライバを読み込む
 		try {
-			Class.forName("org.h2.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
-		}
-		// データベース接続
-		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-	
 			// SELECT文の準備
 			String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM USERS_TABLE ORDER BY ROLE";
-		  	PreparedStatement pStmt = conn.prepareStatement(sql);
-	
+		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
+
 		  	// SELECTを実行
 		  	ResultSet rs = pStmt.executeQuery();
-	
+
 		  	// SELECT文の結果をArrayListに格納
 			while (rs.next()) {
 				String id = rs.getString("USER_ID");
@@ -52,35 +44,25 @@ public class UsersTableDAO {
 	}
 
 	public UserBean find(String id) throws SQLException {
-		// JDBCドライバを読み込む
-		try {
-			Class.forName("org.h2.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
-		}
-		// データベース接続
-		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-	
-			// SELECT文の準備
-			String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM USERS_TABLE WHERE USER_ID=?";
-		  	PreparedStatement pStmt = conn.prepareStatement(sql);
-		  	pStmt.setString(1, id);
+		// SELECT文の準備
+		String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM USERS_TABLE WHERE USER_ID=?";
+	  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
+	  	pStmt.setString(1, id);
 
-		  	// SELECTを実行
-		  	ResultSet rs = pStmt.executeQuery();
-	
-		  	if (!rs.next()) {
-		  		throw new SQLException("データが存在しません");
-		  	} else {
-		  		return new UserBean(
-		  			rs.getString("USER_ID"),
-		  			rs.getString("PASSWORD"),
-		  			rs.getString("NAME"),
-		  			rs.getString("EMAIL"),
-		  			rs.getInt("ROLE")
-		  		);
-		  	}
-		}
+	  	// SELECTを実行
+	  	ResultSet rs = pStmt.executeQuery();
+
+	  	if (!rs.next()) {
+	  		throw new SQLException("データが存在しません");
+	  	} else {
+	  		return new UserBean(
+	  			rs.getString("USER_ID"),
+	  			rs.getString("PASSWORD"),
+	  			rs.getString("NAME"),
+	  			rs.getString("EMAIL"),
+	  			rs.getInt("ROLE")
+	  		);
+	  	}
 	}
 
 	public UserBean find(String id, String password) throws SQLException {
@@ -90,18 +72,10 @@ public class UsersTableDAO {
 	}
 
 	public boolean create(UserBean user) throws SQLException {
-		// JDBCドライバを読み込む
 		try {
-			Class.forName("org.h2.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
-		}
-		// データベース接続
-		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-	
 			// INSERT文の準備
 			String sql = "INSERT INTO USERS_TABLE(USER_ID,PASSWORD,NAME,EMAIL,ROLE) VALUES(?, ?, ?, ?, ?)";
-		  	PreparedStatement pStmt = conn.prepareStatement(sql);
+		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 		  	pStmt.setString(1, user.getId());
 		  	pStmt.setString(2, user.getPassword());
 		  	pStmt.setString(3, user.getName());
@@ -114,25 +88,17 @@ public class UsersTableDAO {
 				return false;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 			return false;
 		}
 		return true;
 	}
 
 	public boolean delete(String id) throws SQLException {
-		// JDBCドライバを読み込む
 		try {
-			Class.forName("org.h2.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
-		}
-		// データベース接続
-		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-	
 			// DELETE文の準備
 			String sql = "DELETE FROM USERS_TABLE WHERE USER_ID = ?";
-		  	PreparedStatement pStmt = conn.prepareStatement(sql);
+		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 		  	pStmt.setString(1, id);
 
 		  	// DELETEを実行
@@ -148,18 +114,10 @@ public class UsersTableDAO {
 	}
 
 	public boolean update(UserBean user) throws SQLException {
-		// JDBCドライバを読み込む
 		try {
-			Class.forName("org.h2.Driver");
-		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
-		}
-		// データベース接続
-		try (Connection conn = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS)) {
-
 			// UPDATE文の準備
 			String sql = "UPDATE USERS_TABLE SET PASSWORD=?, NAME=?, EMAIL=?, ROLE=? WHERE USER_ID=?";
-		  	PreparedStatement pStmt = conn.prepareStatement(sql);
+		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 		  	pStmt.setString(1, user.getPassword());
 		  	pStmt.setString(2, user.getName());
 		  	pStmt.setString(3, user.getEmail());

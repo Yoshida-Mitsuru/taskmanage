@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import dao.TransactionManager;
 import dao.UsersTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -22,9 +23,9 @@ public class UserList extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// リクエストパラメータの取得
 		request.setCharacterEncoding("UTF-8");
-		UsersTableDAO usersTableDAO = new UsersTableDAO();
 		List<UserBean> userList = new ArrayList<>();
-		try {
+		try (TransactionManager trans = new TransactionManager()) {
+			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
 			userList = usersTableDAO.findAll();
 		} catch (SQLException e) {
 	  		throw new ServletException();
