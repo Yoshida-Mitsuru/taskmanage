@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.UserBean;
 
-@WebServlet("/userEditSubmit")
-public class UserEditSubmit extends HttpServlet {
+@WebServlet("/userAddSubmit")
+public class UserAddSubmit extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -28,15 +28,21 @@ public class UserEditSubmit extends HttpServlet {
 		String email = request.getParameter("email");
 		int role = Integer.parseInt(request.getParameter("role"));
 		UserBean user = new UserBean(id, password, name, email, role);
-
+		RequestDispatcher dispatcher = null;
 		try (TransactionManager trans = new TransactionManager()) {
 			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
-			if(usersTableDAO.update(user)) {
-				message = "正常に登録されました";
+			if(usersTableDAO.create(user)) {
 				trans.commit();
+				message = "正常に登録されました";
+				// ユーザー一覧画面にフォワード
+				dispatcher = request.getRequestDispatcher("userList");
 			} else {
-				message = "登録に失敗しました";
 				trans.rollback();
+				message = "すでに存在するIDです";
+				// ユーザー情報をリクエストスコープに保存
+				request.setAttribute("editUser", user);
+				// ユーザー一覧画面にフォワード
+				dispatcher = request.getRequestDispatcher("userAdd");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -47,7 +53,6 @@ public class UserEditSubmit extends HttpServlet {
 		request.setAttribute("message", message);
 
 		// ユーザー編集画面にフォワード
-		RequestDispatcher dispatcher = request.getRequestDispatcher("userEdit");
 		dispatcher.forward(request, response);
 	}
 }

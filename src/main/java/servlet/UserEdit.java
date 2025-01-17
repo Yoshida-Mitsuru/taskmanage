@@ -22,17 +22,17 @@ public class UserEdit extends HttpServlet {
 		// リクエストパラメータの取得
 		request.setCharacterEncoding("UTF-8");
 		String id = request.getParameter("id");
-		UserBean userBean = null;
+		UserBean user = null;
 		try (TransactionManager trans = new TransactionManager()) {
 			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
-			userBean = usersTableDAO.find(id);
+			user = usersTableDAO.find(id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException("対象のユーザーが存在しません");
 		}
 
 		// ユーザー情報をリクエストスコープに保存
-		request.setAttribute("editUser", userBean);
+		request.setAttribute("editUser", user);
 
 		// ユーザー編集画面にフォワード
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userEdit.jsp");

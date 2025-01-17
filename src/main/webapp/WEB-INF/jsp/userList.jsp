@@ -52,6 +52,7 @@
     <button type="submit">ユーザー新規追加</button>
   </form>
   <br>
+  <p>${message}</p>
   <a href="mainMenu">戻る</a>
 </body>
 </html>

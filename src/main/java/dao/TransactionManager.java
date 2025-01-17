@@ -13,6 +13,12 @@ public class TransactionManager implements AutoCloseable {
 	private final Connection connection;
 
 	public TransactionManager() throws SQLException {
+		// JDBCドライバを読み込む
+		try {
+			Class.forName("org.h2.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new IllegalStateException("JDBCドライバを読み込めませんでした");
+		}
 		this.connection = DriverManager.getConnection(JDBC_URL, DB_USER, DB_PASS);
 		this.connection.setAutoCommit(false); // トランザクションの開始
 	}

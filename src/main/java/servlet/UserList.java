@@ -2,7 +2,6 @@ package servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import dao.TransactionManager;
@@ -21,18 +20,25 @@ public class UserList extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		processRequest(request, response);
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		processRequest(request, response);
+	}
+
+	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// リクエストパラメータの取得
 		request.setCharacterEncoding("UTF-8");
-		List<UserBean> userList = new ArrayList<>();
 		try (TransactionManager trans = new TransactionManager()) {
 			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
-			userList = usersTableDAO.findAll();
+			List<UserBean> userList = usersTableDAO.findAll();
+			// ユーザーリストをリクエストスコープに保存
+			request.setAttribute("userList", userList);
 		} catch (SQLException e) {
 	  		throw new ServletException();
 		}
-
-		// ユーザーリストをリクエストスコープに保存
-		request.setAttribute("userList", userList);
 
 		// メインメニュー画面にフォワード
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userList.jsp");

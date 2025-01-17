@@ -14,24 +14,24 @@
 <h2>新規ユーザー追加</h2>
   <form action="userAddSubmit" method="post">
     <label for="id">
-    ID:&nbsp;<input type="text" name="id" id="id" maxlength="10" required>
+    ID:&nbsp;<input type="text" name="id" id="id" maxlength="10" value="${editUser.id}" required>
     </label><br>
     <label for="password">
-    	パスワード:&nbsp;<input type="password" name="password" id="password" maxlength="10" required>
+    	パスワード:&nbsp;<input type="password" name="password" id="password" maxlength="10" value="${editUser.password}" required>
     </label><br>
     <label for="name">
-    名前:&nbsp;<input type="text" name="name" id="name" maxlength="100" required>
+    名前:&nbsp;<input type="text" name="name" id="name" maxlength="100" value="${editUser.name}" required>
     </label><br>
     <label for="email">
-    Email:&nbsp;<input type="email" name="email" id="email" maxlength="100">
+    Email:&nbsp;<input type="email" name="email" id="email" maxlength="100" value="${editUser.email}">
     </label><br>
     <label for="role">
     Role:&nbsp;
       <label for="roleAdmin">
-        <input type="radio" name="role" id="roleAdmin" value="0">管理者
+        <input type="radio" name="role" id="roleAdmin" value="0" <c:if test="${editUser.role == 0}">checked</c:if>>管理者
       </label>
       <label for="roleUser">
-        <input type="radio" name="role" id="roleUser" value="1" checked>ユーザー
+        <input type="radio" name="role" id="roleUser" value="1" <c:if test="${editUser.role == 1 or empty editUser.role}">checked</c:if>>ユーザー
       </label>
     </label><br>
     <button type="submit">追加登録</button>
