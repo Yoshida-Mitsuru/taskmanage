@@ -32,17 +32,17 @@ public class UserAddSubmit extends HttpServlet {
 		boolean isSuccess = false;
 		try (TransactionManager trans = new TransactionManager()) {
 			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
-			if(usersTableDAO.create(user)) {
-				trans.commit();
-				message = "正常に登録されました";
-				isSuccess = true;
-			} else {
-				trans.rollback();
-				message = "すでに存在するIDです";
-			}
+			usersTableDAO.create(user);
+			trans.commit();
+			message = "正常に登録されました";
+			isSuccess = true;
 		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new ServletException("エラーが発生しました");
+			if(e.getMessage() == "すでに存在するデータです") {
+				message = "すでに存在するデータです";
+			} else {
+				e.printStackTrace();
+				throw new ServletException("エラーが発生しました");
+			}
 		}
 
 		if(isSuccess) {

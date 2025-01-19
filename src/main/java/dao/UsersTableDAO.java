@@ -9,6 +9,7 @@ import java.util.List;
 import model.UserBean;
 
 public class UsersTableDAO {
+	private final String TABLE_NAME = "USERS_TABLE";
 	private final TransactionManager trans;
 
 	public UsersTableDAO(TransactionManager trans) {
@@ -20,7 +21,7 @@ public class UsersTableDAO {
 		List<UserBean> userList = new ArrayList<UserBean>();
 		try {
 			// SELECT文の準備
-			String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM USERS_TABLE ORDER BY ROLE";
+			String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM "+TABLE_NAME+" ORDER BY ROLE";
 		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 
 		  	// SELECTを実行
@@ -45,7 +46,7 @@ public class UsersTableDAO {
 
 	public UserBean find(String id) throws SQLException {
 		// SELECT文の準備
-		String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM USERS_TABLE WHERE USER_ID=?";
+		String sql = "SELECT USER_ID,PASSWORD,NAME,EMAIL,ROLE FROM "+TABLE_NAME+" WHERE USER_ID=?";
 	  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 	  	pStmt.setString(1, id);
 
@@ -74,7 +75,7 @@ public class UsersTableDAO {
 	public boolean create(UserBean user) throws SQLException {
 		try {
 			// INSERT文の準備
-			String sql = "INSERT INTO USERS_TABLE(USER_ID,PASSWORD,NAME,EMAIL,ROLE) VALUES(?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO "+TABLE_NAME+"(USER_ID,PASSWORD,NAME,EMAIL,ROLE) VALUES(?, ?, ?, ?, ?)";
 		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 		  	pStmt.setString(1, user.getId());
 		  	pStmt.setString(2, user.getPassword());
@@ -89,7 +90,7 @@ public class UsersTableDAO {
 			}
 		} catch (SQLException e) {
 			// e.printStackTrace();
-			return false;
+			throw new SQLException("すでに存在するデータです");
 		}
 		return true;
 	}
@@ -97,7 +98,7 @@ public class UsersTableDAO {
 	public boolean delete(String id) throws SQLException {
 		try {
 			// DELETE文の準備
-			String sql = "DELETE FROM USERS_TABLE WHERE USER_ID = ?";
+			String sql = "DELETE FROM "+TABLE_NAME+" WHERE USER_ID = ?";
 		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 		  	pStmt.setString(1, id);
 
@@ -116,7 +117,7 @@ public class UsersTableDAO {
 	public boolean update(UserBean user) throws SQLException {
 		try {
 			// UPDATE文の準備
-			String sql = "UPDATE USERS_TABLE SET PASSWORD=?, NAME=?, EMAIL=?, ROLE=? WHERE USER_ID=?";
+			String sql = "UPDATE "+TABLE_NAME+" SET PASSWORD=?, NAME=?, EMAIL=?, ROLE=? WHERE USER_ID=?";
 		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
 		  	pStmt.setString(1, user.getPassword());
 		  	pStmt.setString(2, user.getName());
@@ -134,5 +135,20 @@ public class UsersTableDAO {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean truncate() throws SQLException {
+		try {
+			// SQL文の準備
+			String sql = "TRUNCATE TABLE "+TABLE_NAME;
+		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
+
+		  	// UPDATEを実行
+			pStmt.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

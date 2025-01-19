@@ -11,9 +11,10 @@
 </head>
 <body>
 <h1><%= Constants.APP_NAME %></h1>
-<h2>ログイン失敗</h2>
-<p>${message}</p>
-ログインしなおしてください。<br>
-<a href="index.jsp">TOPへ</a>
+<h2>データ初期化</h2>
+<c:if test="${not empty message}">
+  <p><c:out value="${message}"/></p>
+</c:if>
+<a href="index.jsp">トップへ</a>
 </body>
 </html>

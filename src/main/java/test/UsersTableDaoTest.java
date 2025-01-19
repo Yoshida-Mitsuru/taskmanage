@@ -86,11 +86,35 @@ public class UsersTableDaoTest {
 	void 追加_主キー被り() throws Exception {
 		UserBean user = new UserBean(TEST_USER_ID, "hogehoge", "テスト", "test@example.com", 1);
 		assertTrue(target.create(user));
-		assertFalse(target.create(user));
+		SQLException exception = assertThrows(SQLException.class, () -> {
+			target.create(user);
+		});
+		// 例外のメッセージを確認
+		assertEquals("すでに存在するデータです", exception.getMessage());
 	}
 
 	@Test
 	void 削除対象なし() throws Exception {
 		assertFalse(target.delete(TEST_USER_ID));
+	}
+
+	@Test
+	void テーブルクリア() throws Exception {
+		//現データを取得（TRUNCATEはロールバックできないため）
+		List<UserBean> expected = target.findAll();
+
+		//クリア
+		assertTrue(target.truncate());
+		List<UserBean> actual = target.findAll();
+		assertEquals(0, actual.size());
+
+		//データ復元
+		for (UserBean user : expected) {
+			assertTrue(target.create(user));
+		}
+		trans.commit();
+
+		actual = target.findAll();
+		assertIterableEquals(expected, actual);
 	}
 }
