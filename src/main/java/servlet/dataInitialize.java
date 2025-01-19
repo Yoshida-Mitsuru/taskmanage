@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import constants.InitialData;
+import dao.GroupTableDAO;
 import dao.TransactionManager;
 import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.GroupBean;
 import model.UserBean;
 
 @WebServlet("/dataInitialize")
@@ -28,6 +30,12 @@ public class dataInitialize extends HttpServlet {
 			usersTableDAO.truncate();
 			for (UserBean user : InitialData.userList) {
 				usersTableDAO.create(user);
+			}
+			//グループテーブル
+			GroupTableDAO groupTableDAO = new GroupTableDAO(trans);
+			groupTableDAO.truncate(InitialData.groupList.size()+1);
+			for (GroupBean group : InitialData.groupList) {
+				groupTableDAO.create(group);
 			}
 
 			trans.commit();
