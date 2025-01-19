@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -24,7 +24,7 @@ public class UserDelete extends HttpServlet {
 		String id = request.getParameter("id");
 
 		try (TransactionManager trans = new TransactionManager()) {
-			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
+			UserTableDAO usersTableDAO = new UserTableDAO(trans);
 			if(usersTableDAO.delete(id)) {
 				message = "正常に削除されました";
 				trans.commit();

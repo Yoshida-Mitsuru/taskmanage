@@ -11,18 +11,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import model.UserBean;
 
-public class UsersTableDaoTest {
+public class UserTableDaoTest {
 	private TransactionManager trans = null;
-	private UsersTableDAO target = null;
+	private UserTableDAO target = null;
 	final String TEST_USER_ID = "testdata99";
 
 	@BeforeEach
 	public void setUp() throws SQLException, IOException {
 		trans = new TransactionManager();
-		target = new UsersTableDAO(trans);
+		target = new UserTableDAO(trans);
 	}
 
 	@AfterEach
@@ -55,8 +55,10 @@ public class UsersTableDaoTest {
 
 	@Test
 	void パスワード違い() throws Exception {
+		UserBean user = new UserBean(TEST_USER_ID, "hogehoge", "テスト", "test@example.com", 1);
+		assertTrue(target.create(user));
 		SQLException exception = assertThrows(SQLException.class, () -> {
-			target.find("sa", "ng");
+			target.find(TEST_USER_ID, "ng");
 		});
 
 		// 例外のメッセージを確認

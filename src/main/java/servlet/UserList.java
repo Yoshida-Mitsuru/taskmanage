@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,7 +34,7 @@ public class UserList extends HttpServlet {
 		request.getSession().removeAttribute("message");
 
 		try (TransactionManager trans = new TransactionManager()) {
-			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
+			UserTableDAO usersTableDAO = new UserTableDAO(trans);
 			List<UserBean> userList = usersTableDAO.findAll();
 			// ユーザーリストをリクエストスコープに保存
 			request.setAttribute("userList", userList);

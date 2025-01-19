@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +30,7 @@ public class UserEditSubmit extends HttpServlet {
 		UserBean user = new UserBean(id, password, name, email, role);
 
 		try (TransactionManager trans = new TransactionManager()) {
-			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
+			UserTableDAO usersTableDAO = new UserTableDAO(trans);
 			if(usersTableDAO.update(user)) {
 				message = "正常に登録されました";
 				trans.commit();

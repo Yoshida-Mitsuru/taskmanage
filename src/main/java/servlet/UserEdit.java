@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,7 +24,7 @@ public class UserEdit extends HttpServlet {
 		String id = request.getParameter("id");
 		UserBean user = null;
 		try (TransactionManager trans = new TransactionManager()) {
-			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
+			UserTableDAO usersTableDAO = new UserTableDAO(trans);
 			user = usersTableDAO.find(id);
 		} catch (SQLException e) {
 			e.printStackTrace();

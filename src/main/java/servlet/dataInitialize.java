@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import constants.InitialData;
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,7 +24,7 @@ public class dataInitialize extends HttpServlet {
 		String message = "";
 		try (TransactionManager trans = new TransactionManager()) {
 			//ユーザーテーブル
-			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
+			UserTableDAO usersTableDAO = new UserTableDAO(trans);
 			usersTableDAO.truncate();
 			for (UserBean user : InitialData.userList) {
 				usersTableDAO.create(user);

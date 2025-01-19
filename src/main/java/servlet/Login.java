@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import dao.TransactionManager;
-import dao.UsersTableDAO;
+import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +30,7 @@ public class Login extends HttpServlet {
 		String pass = request.getParameter("pass");
 		UserBean user = null;
 		try (TransactionManager trans = new TransactionManager()) {
-			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
+			UserTableDAO usersTableDAO = new UserTableDAO(trans);
 			user = usersTableDAO.find(id, pass);
 		} catch (SQLException e) {
 			String message = "";
