@@ -34,9 +34,13 @@
         <input type="radio" name="role" id="roleUser" value="1" <c:if test="${editUser.role == 1}">checked</c:if>>ユーザー
       </label>
     </label><br>
+  <c:if test="${empty message}">
     <button type="submit">更新</button>
+  </c:if>
   </form>
-  <p>${message}</p>
+  <c:if test="${not empty message}">
+    <p><c:out value="${message}"/></p>
+  </c:if>
   <a href="userList">ユーザー一覧に戻る</a>
 </body>
 </html>

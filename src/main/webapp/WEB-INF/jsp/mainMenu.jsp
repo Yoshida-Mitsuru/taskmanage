@@ -23,6 +23,7 @@
     </c:when>
     <c:otherwise>
       <p>${message}</p>
+      ログインしなおしてください。<br>
       <a href="index.jsp">TOPへ</a>
     </c:otherwise>
   </c:choose>

@@ -29,8 +29,10 @@ public class UserList extends HttpServlet {
 	}
 
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// リクエストパラメータの取得
-		request.setCharacterEncoding("UTF-8");
+		// セッションからデータを取得
+		String message = (String) request.getSession().getAttribute("message");
+		request.getSession().removeAttribute("message");
+
 		try (TransactionManager trans = new TransactionManager()) {
 			UsersTableDAO usersTableDAO = new UsersTableDAO(trans);
 			List<UserBean> userList = usersTableDAO.findAll();
@@ -40,6 +42,8 @@ public class UserList extends HttpServlet {
 	  		throw new ServletException();
 		}
 
+		// メッセージをリクエストスコープに保存
+		request.setAttribute("message", message);
 		// メインメニュー画面にフォワード
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userList.jsp");
 		dispatcher.forward(request, response);

@@ -10,7 +10,7 @@
 <title><%= Constants.APP_NAME %></title>
 <script type="text/javascript">
   function showConfirm(id, name) {
-    var result = confirm("以下のユーザーを削除してもよろしいですか？。\n"+id+" : "+name);
+    var result = confirm("以下のユーザーを削除してもよろしいですか？\n"+id+" : "+name);
     return result;
   }
 </script>
@@ -40,7 +40,7 @@
           </form>
         </td>
         <td>
-          <form action="userDelete" method="post" onSubmit="return showConfirm('${user.id}', '${user.name}')")>
+          <form action="userDelete" method="post" onSubmit="return showConfirm('${user.id}', '${user.name}')">
             <input type="hidden" name="id" value="${user.id}">
             <button type="submit">削除</button>
           </form>
@@ -52,7 +52,9 @@
     <button type="submit">ユーザー新規追加</button>
   </form>
   <br>
-  <p>${message}</p>
+  <c:if test="${not empty message}">
+    <p><c:out value="${message}"/></p>
+  </c:if>
   <a href="mainMenu">戻る</a>
 </body>
 </html>

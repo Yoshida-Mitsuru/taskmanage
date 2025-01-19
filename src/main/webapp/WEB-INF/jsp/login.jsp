@@ -10,8 +10,9 @@
 </head>
 <body>
 <h1><%= Constants.APP_NAME %></h1>
-<h2>ログアウト</h2>
-<p>ログアウトしました</p>
-<a href="index.jsp">トップへ</a>
+<h2>ログイン失敗</h2>
+<p>${message}</p>
+ログインしなおしてください。<br>
+<a href="index.jsp">TOPへ</a>
 </body>
 </html>

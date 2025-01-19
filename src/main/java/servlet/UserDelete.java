@@ -5,12 +5,12 @@ import java.sql.SQLException;
 
 import dao.TransactionManager;
 import dao.UsersTableDAO;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/userDelete")
 public class UserDelete extends HttpServlet {
@@ -37,11 +37,10 @@ public class UserDelete extends HttpServlet {
 			throw new ServletException("エラーが発生しました");
 		}
 
-		// メッセージをリクエストスコープに保存
-		request.setAttribute("message", message);
-
-		// ユーザー一覧画面にフォワード
-		RequestDispatcher dispatcher = request.getRequestDispatcher("userList");
-		dispatcher.forward(request, response);
+		// メッセージをセッションスコープに保存
+		HttpSession session = request.getSession();
+		session.setAttribute("message", message);
+		// ユーザー一覧画面にリダイレクト
+		response.sendRedirect("userList");
 	}
 }

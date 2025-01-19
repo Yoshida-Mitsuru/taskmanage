@@ -43,11 +43,17 @@ public class Login extends HttpServlet {
 			request.setAttribute("message", message);
 		}
 
-		// ユーザー情報をセッションスコープに保存
-		HttpSession session = request.getSession();
-		session.setAttribute("loginUser", user);
-
-		// メインメニュー画面にフォワード
-		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/mainMenu.jsp");
-		dispatcher.forward(request, response);	}
+		if(user != null) {
+			// ユーザー情報をセッションスコープに保存
+			HttpSession session = request.getSession();
+			session.setAttribute("loginUser", user);
+	
+			// メインメニュー画面にリダイレクト
+			response.sendRedirect("mainMenu");
+		} else {
+			// ログイン失敗画面にフォワード
+			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/login.jsp");
+			dispatcher.forward(request, response);
+		}
+	}
 }
