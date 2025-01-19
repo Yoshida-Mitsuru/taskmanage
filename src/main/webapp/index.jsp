@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1><%= Constants.APP_NAME %></h1>
-<form action="mainMenu" method="post">
+<form action="login" method="post">
 ユーザーID：<input type="text" name="id"><br>
 パスワード：<input type="password" name="pass"><br>
 <button type="submit">ログイン</button>
