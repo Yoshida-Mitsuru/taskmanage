@@ -34,8 +34,8 @@ public class UserList extends HttpServlet {
 		request.getSession().removeAttribute("message");
 
 		try (TransactionManager trans = new TransactionManager()) {
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			List<UserBean> userList = usersTableDAO.findAll();
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			List<UserBean> userList = userTableDAO.findAll();
 			// ユーザーリストをリクエストスコープに保存
 			request.setAttribute("userList", userList);
 		} catch (SQLException e) {
@@ -44,7 +44,7 @@ public class UserList extends HttpServlet {
 
 		// メッセージをリクエストスコープに保存
 		request.setAttribute("message", message);
-		// メインメニュー画面にフォワード
+		// ユーザー一覧画面にフォワード
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userList.jsp");
 		dispatcher.forward(request, response);
 	}
