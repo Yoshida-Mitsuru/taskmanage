@@ -24,8 +24,8 @@ public class UserEdit extends HttpServlet {
 		String id = request.getParameter("id");
 		UserBean user = null;
 		try (TransactionManager trans = new TransactionManager()) {
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			user = usersTableDAO.find(id);
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			user = userTableDAO.find(id);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException("対象のユーザーが存在しません");

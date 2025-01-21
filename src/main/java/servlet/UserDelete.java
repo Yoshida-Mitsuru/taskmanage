@@ -24,8 +24,8 @@ public class UserDelete extends HttpServlet {
 		String id = request.getParameter("id");
 
 		try (TransactionManager trans = new TransactionManager()) {
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			if(usersTableDAO.delete(id)) {
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			if(userTableDAO.delete(id)) {
 				message = "正常に削除されました";
 				trans.commit();
 			} else {

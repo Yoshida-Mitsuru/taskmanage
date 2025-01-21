@@ -26,10 +26,10 @@ public class dataInitialize extends HttpServlet {
 		String message = "";
 		try (TransactionManager trans = new TransactionManager()) {
 			//ユーザーテーブル
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			usersTableDAO.truncate();
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			userTableDAO.truncate();
 			for (UserBean user : InitialData.userList) {
-				usersTableDAO.create(user);
+				userTableDAO.create(user);
 			}
 			//グループテーブル
 			GroupTableDAO groupTableDAO = new GroupTableDAO(trans);

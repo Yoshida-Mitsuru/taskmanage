@@ -30,8 +30,8 @@ public class Login extends HttpServlet {
 		String pass = request.getParameter("pass");
 		UserBean user = null;
 		try (TransactionManager trans = new TransactionManager()) {
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			user = usersTableDAO.find(id, pass);
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			user = userTableDAO.find(id, pass);
 		} catch (SQLException e) {
 			String message = "";
 			if(e.getMessage().equals("データが存在しません")) {

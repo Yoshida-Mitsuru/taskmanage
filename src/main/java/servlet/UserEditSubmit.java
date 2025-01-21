@@ -30,8 +30,8 @@ public class UserEditSubmit extends HttpServlet {
 		UserBean user = new UserBean(id, password, name, email, role);
 
 		try (TransactionManager trans = new TransactionManager()) {
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			if(usersTableDAO.update(user)) {
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			if(userTableDAO.update(user)) {
 				message = "正常に登録されました";
 				trans.commit();
 			} else {

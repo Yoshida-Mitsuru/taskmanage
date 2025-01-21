@@ -31,8 +31,8 @@ public class UserAddSubmit extends HttpServlet {
 		UserBean user = new UserBean(id, password, name, email, role);
 		boolean isSuccess = false;
 		try (TransactionManager trans = new TransactionManager()) {
-			UserTableDAO usersTableDAO = new UserTableDAO(trans);
-			usersTableDAO.create(user);
+			UserTableDAO userTableDAO = new UserTableDAO(trans);
+			userTableDAO.create(user);
 			trans.commit();
 			message = "正常に登録されました";
 			isSuccess = true;
