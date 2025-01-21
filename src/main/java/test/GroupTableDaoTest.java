@@ -84,7 +84,7 @@ public class GroupTableDaoTest {
 		List<GroupBean> expected = target.findAll();
 
 		//クリア
-		assertTrue(target.truncate(expected.size()));
+		assertTrue(target.truncate(expected.size()+1));
 		List<GroupBean> actual = target.findAll();
 		assertEquals(0, actual.size());
 

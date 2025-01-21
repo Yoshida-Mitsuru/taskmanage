@@ -19,6 +19,7 @@
       <c:if test="${loginUser.admin}">
         <p>管理者 メニュー</p>
         <a href="userList">ユーザー管理</a><br>
+        <a href="groupList">グループ管理</a><br>
       </c:if>
     </c:when>
     <c:otherwise>
