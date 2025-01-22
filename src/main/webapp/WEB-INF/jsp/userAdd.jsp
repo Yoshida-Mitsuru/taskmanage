@@ -3,6 +3,10 @@
     pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="constants.Constants" %>
+<%@ page import="model.UserBean" %>
+<%
+  UserBean u = (UserBean)request.getAttribute("editUser");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,10 +32,12 @@
     <label for="role">
     Role:&nbsp;
       <label for="roleAdmin">
-        <input type="radio" name="role" id="roleAdmin" value="0" <c:if test="${editUser.role == 0}">checked</c:if>>管理者
+        <input type="radio" name="role" id="roleAdmin" value="<%= Constants.ROLE.ADMIN.ordinal() %>"<% if(u != null && u.getRole() == Constants.ROLE.ADMIN.ordinal()) { %> checked<% } %>>
+        <%= Constants.ROLE_NAME.get(Constants.ROLE.ADMIN.ordinal()) %>
       </label>
       <label for="roleUser">
-        <input type="radio" name="role" id="roleUser" value="1" <c:if test="${editUser.role == 1 or empty editUser.role}">checked</c:if>>ユーザー
+        <input type="radio" name="role" id="roleUser" value="<%= Constants.ROLE.USER.ordinal() %>"<% if(u == null || u.getRole() == Constants.ROLE.USER.ordinal()) { %> checked<% } %>>
+        <%= Constants.ROLE_NAME.get(Constants.ROLE.USER.ordinal()) %>
       </label>
     </label><br>
     <button type="submit">追加登録</button>

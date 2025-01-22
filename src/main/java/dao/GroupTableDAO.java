@@ -7,10 +7,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import constants.Constants;
 import model.GroupBean;
 
 public class GroupTableDAO {
-	private final String TABLE_NAME = "TBL_GROUP";
+	private final String GROUP_TABLE = Constants.GROUP_TABLE;
 	private final String TABLE_COLUMNS = "ID,NAME,DESCRIPTION";
 	private final TransactionManager trans;
 
@@ -22,7 +23,7 @@ public class GroupTableDAO {
 	public List<GroupBean> findAll() throws SQLException, IllegalStateException {
 		List<GroupBean> groupList = new ArrayList<GroupBean>();
 		try {
-			String sql = "SELECT "+TABLE_COLUMNS+" FROM "+TABLE_NAME+" ORDER BY ID";
+			String sql = "SELECT "+TABLE_COLUMNS+" FROM "+GROUP_TABLE+" ORDER BY ID";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 			  	ResultSet rs = pStmt.executeQuery();
 			  	// SELECT文の結果をArrayListに格納
@@ -43,7 +44,7 @@ public class GroupTableDAO {
 	}
 
 	public GroupBean find(int id) throws SQLException {
-		String sql = "SELECT "+TABLE_COLUMNS+" FROM "+TABLE_NAME+" WHERE ID=?";
+		String sql = "SELECT "+TABLE_COLUMNS+" FROM "+GROUP_TABLE+" WHERE ID=?";
 		try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 		  	pStmt.setInt(1, id);
 		  	ResultSet rs = pStmt.executeQuery();
@@ -63,7 +64,7 @@ public class GroupTableDAO {
 		try {
 			if(group.getId() == 0) {
 				// ID自動採番
-				String sql = "INSERT INTO " + TABLE_NAME + "(NAME, DESCRIPTION) VALUES(?, ?)";
+				String sql = "INSERT INTO " + GROUP_TABLE + "(NAME, DESCRIPTION) VALUES(?, ?)";
 				try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 					pStmt.setString(1, group.getName());
 					pStmt.setString(2, group.getDescription());
@@ -78,7 +79,7 @@ public class GroupTableDAO {
 				}
 			} else {
 				// ID指定
-				String sql = "INSERT INTO " + TABLE_NAME + "(ID, NAME, DESCRIPTION) VALUES(?, ?, ?)";
+				String sql = "INSERT INTO " + GROUP_TABLE + "(ID, NAME, DESCRIPTION) VALUES(?, ?, ?)";
 				try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 					pStmt.setInt(1, group.getId());
 					pStmt.setString(2, group.getName());
@@ -98,7 +99,7 @@ public class GroupTableDAO {
 
 	public boolean delete(int id) throws SQLException {
 		try {
-			String sql = "DELETE FROM "+TABLE_NAME+" WHERE ID = ?";
+			String sql = "DELETE FROM "+GROUP_TABLE+" WHERE ID = ?";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.setInt(1, id);
 				int affectedRows = pStmt.executeUpdate();
@@ -115,7 +116,7 @@ public class GroupTableDAO {
 
 	public boolean update(GroupBean user) throws SQLException {
 		try {
-			String sql = "UPDATE "+TABLE_NAME+" SET NAME=?, DESCRIPTION=? WHERE ID=?";
+			String sql = "UPDATE "+GROUP_TABLE+" SET NAME=?, DESCRIPTION=? WHERE ID=?";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.setString(1, user.getName());
 				pStmt.setString(2, user.getDescription());
@@ -135,12 +136,12 @@ public class GroupTableDAO {
 	public boolean truncate(int initialId) throws SQLException {
 		try {
 			// 外部キー制約のためTRUNCATE不可
-			String sql = "DELETE FROM "+TABLE_NAME;
+			String sql = "DELETE FROM "+GROUP_TABLE;
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.executeUpdate();
 			}
 			// 自動採番リセット
-			sql = "ALTER TABLE "+TABLE_NAME+" ALTER COLUMN ID INT AUTO_INCREMENT("+initialId+")";
+			sql = "ALTER TABLE "+GROUP_TABLE+" ALTER COLUMN ID INT AUTO_INCREMENT("+initialId+")";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.executeUpdate();
 			}

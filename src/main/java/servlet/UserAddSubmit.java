@@ -57,7 +57,7 @@ public class UserAddSubmit extends HttpServlet {
 			// ユーザー情報をリクエストスコープに保存
 			request.setAttribute("editUser", user);
 			// ユーザー一覧画面にフォワード
-			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userAdd");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userAdd.jsp");
 			dispatcher.forward(request, response);
 		}
 	}

@@ -28,6 +28,10 @@ public final class Constants {
 	}
 	public static final Map<Integer, String> ROLE_NAME = Collections.unmodifiableMap(TEMP_MAP);
 
+	// テーブル名
+	public static final String GROUP_TABLE = "TBL_GROUP";
+	public static final String USER_TABLE = "TBL_USER";
+
 	// コンストラクタをプライベートにしてインスタンス化を防止
 	private Constants() {
 		throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

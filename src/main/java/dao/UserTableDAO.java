@@ -6,10 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import constants.Constants;
 import model.UserBean;
 
 public class UserTableDAO {
-	private final String TABLE_NAME = "TBL_USER";
+	private final String USER_TABLE = Constants.USER_TABLE;
 	private final TransactionManager trans;
 
 	public UserTableDAO(TransactionManager trans) {
@@ -20,22 +21,19 @@ public class UserTableDAO {
 	public List<UserBean> findAll() throws SQLException, IllegalStateException {
 		List<UserBean> userList = new ArrayList<UserBean>();
 		try {
-			// SELECT文の準備
-			String sql = "SELECT ID,PASSWORD,NAME,EMAIL,ROLE FROM "+TABLE_NAME+" ORDER BY ROLE";
-		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
-
-		  	// SELECTを実行
-		  	ResultSet rs = pStmt.executeQuery();
-
-		  	// SELECT文の結果をArrayListに格納
-			while (rs.next()) {
-				String id = rs.getString("ID");
-				String password = rs.getString("PASSWORD");
-				String name = rs.getString("NAME");
-				String email = rs.getString("EMAIL");
-				int role = rs.getInt("ROLE");
-				UserBean user = new UserBean(id, password, name, email, role);
-				userList.add(user);
+			String sql = "SELECT ID,PASSWORD,NAME,EMAIL,ROLE FROM "+USER_TABLE+" ORDER BY ROLE";
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+			  	ResultSet rs = pStmt.executeQuery();
+				while (rs.next()) {
+					UserBean user = new UserBean(
+						rs.getString("ID"),
+						rs.getString("PASSWORD"),
+						rs.getString("NAME"),
+						rs.getString("EMAIL"),
+						rs.getInt("ROLE")
+					);
+					userList.add(user);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -45,25 +43,22 @@ public class UserTableDAO {
 	}
 
 	public UserBean find(String id) throws SQLException {
-		// SELECT文の準備
-		String sql = "SELECT ID,PASSWORD,NAME,EMAIL,ROLE FROM "+TABLE_NAME+" WHERE ID=?";
-	  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
-	  	pStmt.setString(1, id);
-
-	  	// SELECTを実行
-	  	ResultSet rs = pStmt.executeQuery();
-
-	  	if (!rs.next()) {
-	  		throw new SQLException("データが存在しません");
-	  	} else {
-	  		return new UserBean(
-	  			rs.getString("ID"),
-	  			rs.getString("PASSWORD"),
-	  			rs.getString("NAME"),
-	  			rs.getString("EMAIL"),
-	  			rs.getInt("ROLE")
-	  		);
-	  	}
+		String sql = "SELECT ID,PASSWORD,NAME,EMAIL,ROLE FROM "+USER_TABLE+" WHERE ID=?";
+		try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+		  	pStmt.setString(1, id);
+		  	ResultSet rs = pStmt.executeQuery();
+		  	if (rs.next()) {
+		  		return new UserBean(
+			  			rs.getString("ID"),
+			  			rs.getString("PASSWORD"),
+			  			rs.getString("NAME"),
+			  			rs.getString("EMAIL"),
+			  			rs.getInt("ROLE")
+			  		);
+		  	} else {
+		  		throw new SQLException("データが存在しません");
+		  	}
+		}
 	}
 
 	public UserBean find(String id, String password) throws SQLException {
@@ -74,19 +69,17 @@ public class UserTableDAO {
 
 	public boolean create(UserBean user) throws SQLException {
 		try {
-			// INSERT文の準備
-			String sql = "INSERT INTO "+TABLE_NAME+"(ID,PASSWORD,NAME,EMAIL,ROLE) VALUES(?, ?, ?, ?, ?)";
-		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
-		  	pStmt.setString(1, user.getId());
-		  	pStmt.setString(2, user.getPassword());
-		  	pStmt.setString(3, user.getName());
-		  	pStmt.setString(4, user.getEmail());
-		  	pStmt.setInt(5, user.getRole());
-
-		  	// INSERTを実行
-			int result = pStmt.executeUpdate();
-			if (result != 1) {
-				return false;
+			String sql = "INSERT INTO "+USER_TABLE+"(ID,PASSWORD,NAME,EMAIL,ROLE) VALUES(?, ?, ?, ?, ?)";
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+			  	pStmt.setString(1, user.getId());
+			  	pStmt.setString(2, user.getPassword());
+			  	pStmt.setString(3, user.getName());
+			  	pStmt.setString(4, user.getEmail());
+			  	pStmt.setInt(5, user.getRole());
+				int affectedRows = pStmt.executeUpdate();
+				if (affectedRows != 1) {
+					return false;
+				}
 			}
 		} catch (SQLException e) {
 			// e.printStackTrace();
@@ -97,15 +90,13 @@ public class UserTableDAO {
 
 	public boolean delete(String id) throws SQLException {
 		try {
-			// DELETE文の準備
-			String sql = "DELETE FROM "+TABLE_NAME+" WHERE ID = ?";
-		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
-		  	pStmt.setString(1, id);
-
-		  	// DELETEを実行
-			int result = pStmt.executeUpdate();
-			if (result != 1) {
-				return false;
+			String sql = "DELETE FROM "+USER_TABLE+" WHERE ID = ?";
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+				pStmt.setString(1, id);
+				int affectedRows = pStmt.executeUpdate();
+				if (affectedRows != 1) {
+					return false;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -116,19 +107,17 @@ public class UserTableDAO {
 
 	public boolean update(UserBean user) throws SQLException {
 		try {
-			// UPDATE文の準備
-			String sql = "UPDATE "+TABLE_NAME+" SET PASSWORD=?, NAME=?, EMAIL=?, ROLE=? WHERE ID=?";
-		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
-		  	pStmt.setString(1, user.getPassword());
-		  	pStmt.setString(2, user.getName());
-		  	pStmt.setString(3, user.getEmail());
-		  	pStmt.setInt(4, user.getRole());
-		  	pStmt.setString(5, user.getId());
-
-		  	// UPDATEを実行
-			int result = pStmt.executeUpdate();
-			if (result != 1) {
-				return false;
+			String sql = "UPDATE "+USER_TABLE+" SET PASSWORD=?, NAME=?, EMAIL=?, ROLE=? WHERE ID=?";
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+			  	pStmt.setString(1, user.getPassword());
+			  	pStmt.setString(2, user.getName());
+			  	pStmt.setString(3, user.getEmail());
+			  	pStmt.setInt(4, user.getRole());
+			  	pStmt.setString(5, user.getId());
+				int affectedRows = pStmt.executeUpdate();
+				if (affectedRows != 1) {
+					return false;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -136,15 +125,14 @@ public class UserTableDAO {
 		}
 		return true;
 	}
-
+//TODO テーブル名　外部定数化
 	public boolean truncate() throws SQLException {
 		try {
-			// SQL文の準備
-			String sql = "TRUNCATE TABLE "+TABLE_NAME;
-		  	PreparedStatement pStmt = trans.getConnection().prepareStatement(sql);
-
-		  	// UPDATEを実行
-			pStmt.executeUpdate();
+			// 外部キー制約のためTRUNCATE不可
+			String sql = "DELETE FROM "+USER_TABLE;
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+				pStmt.executeUpdate();
+			}
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
