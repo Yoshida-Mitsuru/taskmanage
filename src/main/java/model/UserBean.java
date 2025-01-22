@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import constants.Constants;
+import constants.Constants.ROLE;
 
 public class UserBean implements Serializable {
 	private String userId;		// ID
@@ -38,7 +39,7 @@ public class UserBean implements Serializable {
 	public String getEmail() { return email; }
 	public int getRole() { return role; }
 	public String getRoleName() { return Constants.ROLE_NAME.get(role); }
-	public boolean isAdmin() { return role == Constants.ROLE_ADMIN; }
+	public boolean isAdmin() { return role == ROLE.ADMIN.ordinal(); }
 
 	public boolean isPasswordCorrect(String password) {
 		return this.password.equals(password);
