@@ -80,6 +80,8 @@ public class GroupTableDaoTest {
 
 	@Test
 	void テーブルクリア() throws Exception {
+		// ID指定追加のテスト兼ねる
+
 		//現データを取得（TRUNCATEはロールバックできないため）
 		List<GroupBean> expected = target.findAll();
 
