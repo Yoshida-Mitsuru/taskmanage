@@ -31,6 +31,7 @@ public final class Constants {
 	// テーブル名
 	public static final String GROUP_TABLE = "TBL_GROUP";
 	public static final String USER_TABLE = "TBL_USER";
+	public static final String USER_GROUP_RELATION = "REL_GROUP_USER";
 
 	// コンストラクタをプライベートにしてインスタンス化を防止
 	private Constants() {

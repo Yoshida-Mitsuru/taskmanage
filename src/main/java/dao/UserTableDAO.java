@@ -125,7 +125,7 @@ public class UserTableDAO {
 		}
 		return true;
 	}
-//TODO テーブル名　外部定数化
+
 	public boolean truncate() throws SQLException {
 		try {
 			// 外部キー制約のためTRUNCATE不可
