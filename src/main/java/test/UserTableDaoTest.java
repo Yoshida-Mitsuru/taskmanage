@@ -102,21 +102,9 @@ public class UserTableDaoTest {
 
 	@Test
 	void テーブルクリア() throws Exception {
-		//現データを取得（TRUNCATEはロールバックできないため）
-		List<UserBean> expected = target.findAll();
-
 		//クリア
 		assertTrue(target.truncate());
 		List<UserBean> actual = target.findAll();
 		assertEquals(0, actual.size());
-
-		//データ復元
-		for (UserBean user : expected) {
-			assertTrue(target.create(user));
-		}
-		trans.commit();
-
-		actual = target.findAll();
-		assertIterableEquals(expected, actual);
 	}
 }

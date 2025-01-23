@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.OptionalInt;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +56,7 @@ public class GroupTableDaoTest {
 
 	@Test
 	void 追加と削除_正常() throws Exception {
-		//追加
+		// 追加
 		GroupBean group = new GroupBean("hogehoge", "テスト");
 		List<GroupBean> expected = target.findAll();
 		int id = target.create(group);
@@ -65,11 +66,25 @@ public class GroupTableDaoTest {
 		assertEquals(expected.size(), actual.size());
 		assertIterableEquals(expected, actual);
 
-		//削除
+		// 削除
 		expected.remove(expected.size() - 1);
 		assertTrue(target.delete(id));
 		actual = target.findAll();
 		assertEquals(expected.size(), actual.size());
+		assertIterableEquals(expected, actual);
+	}
+
+	@Test
+	void 追加_ID指定() throws Exception {
+		List<GroupBean> expected = target.findAll();
+		OptionalInt maxId = expected.stream()
+				.mapToInt(GroupBean::getId)
+				.max(); // 最大値を求める
+		GroupBean group = new GroupBean(maxId.getAsInt()+100, "hogehoge", "テスト");
+		int id = target.create(group);
+		assertEquals(maxId.getAsInt()+100, id);
+		expected.add(group);
+		List<GroupBean> actual = target.findAll();
 		assertIterableEquals(expected, actual);
 	}
 
@@ -80,23 +95,20 @@ public class GroupTableDaoTest {
 
 	@Test
 	void テーブルクリア() throws Exception {
-		// ID指定追加のテスト兼ねる
-
-		//現データを取得（TRUNCATEはロールバックできないため）
+		// 現データを取得
 		List<GroupBean> expected = target.findAll();
 
-		//クリア
+		// クリア
 		assertTrue(target.truncate(expected.size()+1));
 		List<GroupBean> actual = target.findAll();
 		assertEquals(0, actual.size());
 
-		//データ復元
-		for (GroupBean group : expected) {
-			assertEquals(group.getId(), target.create(group));
-		}
-		trans.commit();
-
+		// 自動採番のリセット確認
+		GroupBean group = new GroupBean("hogehoge", "テスト");
+		int id = target.create(group);
+		group.setId(id);
+		assertEquals(expected.size()+1, id);
 		actual = target.findAll();
-		assertIterableEquals(expected, actual);
+		assertEquals(group, actual.get(0));
 	}
 }
