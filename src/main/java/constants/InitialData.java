@@ -6,6 +6,7 @@ import java.util.List;
 
 import constants.Constants.ROLE;
 import model.GroupBean;
+import model.GroupUserRelationBean;
 import model.UserBean;
 
 public final class InitialData {
@@ -21,12 +22,22 @@ public final class InitialData {
 	);
 
 	public final static List<GroupBean> groupList = Collections.unmodifiableList(
-			Arrays.asList(
-				new GroupBean(1, "システム", "テスト用グループです"),
-				new GroupBean(2, "HOGE プロジェクトグループ", "HOGE プロジェクト"),
-				new GroupBean(3, "FUGA プロジェクトグループ", "FUGA プロジェクト")
-			)
-		);
+		Arrays.asList(
+			new GroupBean(1, "システム", "テスト用グループです"),
+			new GroupBean(2, "HOGE プロジェクトグループ", "HOGE プロジェクト"),
+			new GroupBean(3, "FUGA プロジェクトグループ", "FUGA プロジェクト")
+		)
+	);
+
+	public final static List<GroupUserRelationBean> groupUserRelation = Collections.unmodifiableList(
+		Arrays.asList(
+			new GroupUserRelationBean(1, "user"),
+			new GroupUserRelationBean(2, "user"),
+			new GroupUserRelationBean(2, "user1"),
+			new GroupUserRelationBean(3, "user"),
+			new GroupUserRelationBean(3, "user2")
+		)
+	);
 
 	// コンストラクタをプライベートにしてインスタンス化を防止
 	private InitialData() {

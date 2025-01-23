@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import constants.InitialData;
 import dao.GroupTableDAO;
+import dao.GroupUserRelationDAO;
 import dao.TransactionManager;
 import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.GroupBean;
+import model.GroupUserRelationBean;
 import model.UserBean;
 
 @WebServlet("/dataInitialize")
@@ -25,17 +27,24 @@ public class dataInitialize extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String message = "";
 		try (TransactionManager trans = new TransactionManager()) {
-			//ユーザーテーブル
+			// グループユーザー関係テーブルクリア
+			GroupUserRelationDAO groupUserRelationDAO = new GroupUserRelationDAO(trans);
+			groupUserRelationDAO.truncate();
+			// ユーザーテーブル
 			UserTableDAO userTableDAO = new UserTableDAO(trans);
 			userTableDAO.truncate();
 			for (UserBean user : InitialData.userList) {
 				userTableDAO.create(user);
 			}
-			//グループテーブル
+			// グループテーブル
 			GroupTableDAO groupTableDAO = new GroupTableDAO(trans);
 			groupTableDAO.truncate(InitialData.groupList.size()+1);
 			for (GroupBean group : InitialData.groupList) {
 				groupTableDAO.create(group);
+			}
+			// グループユーザー関係テーブルクリア
+			for (GroupUserRelationBean relation : InitialData.groupUserRelation) {
+				groupUserRelationDAO.create(relation.getGroupId(), relation.getUserId());
 			}
 
 			trans.commit();
