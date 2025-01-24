@@ -20,6 +20,7 @@ import dao.GroupUserRelationDAO;
 import dao.TransactionManager;
 import dao.UserTableDAO;
 import model.GroupBean;
+import model.GroupUserRelationBean;
 import model.UserBean;
 
 public class GroupUserRelationDaoTest {
@@ -69,7 +70,10 @@ public class GroupUserRelationDaoTest {
 	@Test
 	void 追加() throws Exception {
 		for (GroupBean group : groups) {
-			assertTrue(target.create(group.getId(), users.get(1).getId()));
+			GroupUserRelationBean relation = new GroupUserRelationBean(
+				group.getId(),
+				users.get(1).getId()			);
+			assertTrue(target.create(relation));
 		}
 		List<String> expected = groups.stream()
 			.map(GroupBean::getName)
@@ -95,7 +99,11 @@ public class GroupUserRelationDaoTest {
 	void 削除_グループ指定() throws Exception {
 		List<String> expected = new ArrayList<String>();
 		for (UserBean user : users) {
-			assertTrue(target.create(groups.get(1).getId(), user.getId()));
+			GroupUserRelationBean relation = new GroupUserRelationBean(
+				groups.get(1).getId(),
+				user.getId()
+			);
+			assertTrue(target.create(relation));
 			expected.add(user.getName());
 		}
 		List<String> actual = target.findUsersByGroupId(groups.get(1).getId());
@@ -120,16 +128,24 @@ public class GroupUserRelationDaoTest {
 		OptionalInt maxId = groups.stream()
 			.mapToInt(GroupBean::getId) // IDをintストリームに変換
 			.max(); // 最大値を求める
+		GroupUserRelationBean relation = new GroupUserRelationBean(
+			maxId.getAsInt()+1,
+			users.get(1).getId()
+		);
 		SQLException exception = assertThrows(SQLException.class, () -> {
-			target.create(maxId.getAsInt()+1, users.get(1).getId());
+			target.create(relation);
 		});
 		assertEquals("キー制約違反です", exception.getMessage());
 	}
 
 	@Test
 	void キー制約違反_ユーザー() throws Exception {
+		GroupUserRelationBean relation = new GroupUserRelationBean(
+			groups.get(1).getId(),
+			"fugafuga"
+		);
 		SQLException exception = assertThrows(SQLException.class, () -> {
-			target.create(groups.get(1).getId(), "fugafuga");
+			target.create(relation);
 		});
 		assertEquals("キー制約違反です", exception.getMessage());
 	}

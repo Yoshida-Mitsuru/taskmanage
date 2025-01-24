@@ -42,9 +42,9 @@ public class dataInitialize extends HttpServlet {
 			for (GroupBean group : InitialData.groupList) {
 				groupTableDAO.create(group);
 			}
-			// グループユーザー関係テーブルクリア
+			// グループユーザー関係テーブル
 			for (GroupUserRelationBean relation : InitialData.groupUserRelation) {
-				groupUserRelationDAO.create(relation.getGroupId(), relation.getUserId());
+				groupUserRelationDAO.create(relation);
 			}
 
 			trans.commit();

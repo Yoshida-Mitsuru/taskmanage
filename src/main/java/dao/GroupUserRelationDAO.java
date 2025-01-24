@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import constants.Constants;
+import model.GroupUserRelationBean;
 
 public class GroupUserRelationDAO {
 	private final String USER_GROUP_RELATION = Constants.USER_GROUP_RELATION;
@@ -59,12 +60,12 @@ public class GroupUserRelationDAO {
 		return groupList;
 	}
 
-	public boolean create(int groupId, String userId) throws SQLException {
+	public boolean create(GroupUserRelationBean relation) throws SQLException {
 		try {
 			String sql = "INSERT INTO "+USER_GROUP_RELATION+"(GROUP_ID,USER_ID) VALUES(?, ?)";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
-			  	pStmt.setInt(1, groupId);
-			  	pStmt.setString(2, userId);
+			  	pStmt.setInt(1, relation.getGroupId());
+			  	pStmt.setString(2, relation.getUserId());
 				int affectedRows = pStmt.executeUpdate();
 				if (affectedRows != 1) {
 					return false;
