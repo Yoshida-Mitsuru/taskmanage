@@ -34,4 +34,12 @@ public class GroupUserRelationBean implements Serializable {
 	public int hashCode() {
 		  return Objects.hash(groupId, userId);
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "{" +
+				"groupId='" + groupId + '\'' +
+				", userId='" + userId + '\'' +
+				'}';
+	}
 }

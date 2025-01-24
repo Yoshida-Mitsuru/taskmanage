@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +29,7 @@ public class GroupUserRelationDaoTest {
 	private GroupTableDAO groupDao = null;
 	private List<GroupBean> groups = null;
 	private List<UserBean> users = null;
+	private List<GroupUserRelationBean> relations = null;
 
 	@BeforeEach
 	public void setUp() throws SQLException, IOException {
@@ -43,18 +43,24 @@ public class GroupUserRelationDaoTest {
 				new UserBean("testuser2", "222", "立山　花子", "", ROLE.USER.ordinal()),
 				new UserBean("testuser3", "333", "石川　次郎", "", ROLE.USER.ordinal())
 			));
+		for (UserBean user : users) {
+			userDao.create(user);
+		}
 		groups = new ArrayList<>(Arrays.asList(
 				new GroupBean("TEST1グループ", "TEST1"),
 				new GroupBean("TEST2グループ", "TEST2"),
 				new GroupBean("TEST3グループ", "TEST3")
 			));
 		for (GroupBean group : groups) {
-			int groupId = groupDao.create(group);
-			group.setId(groupId);
+			groupDao.create(group);
 		}
-		for (UserBean user : users) {
-			userDao.create(user);
-		}
+		relations = new ArrayList<>(Arrays.asList(
+				new GroupUserRelationBean(groups.get(0).getId(), users.get(0).getId()),
+				new GroupUserRelationBean(groups.get(1).getId(), users.get(0).getId()),
+				new GroupUserRelationBean(groups.get(2).getId(), users.get(0).getId()),
+				new GroupUserRelationBean(groups.get(2).getId(), users.get(1).getId()),
+				new GroupUserRelationBean(groups.get(2).getId(), users.get(2).getId())
+			));
 	}
 
 	@AfterEach
@@ -69,48 +75,42 @@ public class GroupUserRelationDaoTest {
 
 	@Test
 	void 追加() throws Exception {
-		for (GroupBean group : groups) {
-			GroupUserRelationBean relation = new GroupUserRelationBean(
-				group.getId(),
-				users.get(1).getId()			);
+		for (GroupUserRelationBean relation : relations) {
 			assertTrue(target.create(relation));
 		}
-		List<String> expected = groups.stream()
-			.map(GroupBean::getName)
-			.collect(Collectors.toList()); 
-		List<String> actual = target.findGroupsByUserId(users.get(1).getId());
-		assertIterableEquals(expected, actual);
+	}
+
+	@Test
+	void 取得_全件() throws Exception {
+		追加();
+		List<GroupUserRelationBean> actual = target.findAll();
+		assertIterableEquals(relations, actual);
+	}
+
+	@Test
+	void ユーザーIDからグループ取得() throws Exception {
+		追加();
+		List<GroupBean> actual = target.findGroupsByUserId(users.get(0).getId());
+		assertIterableEquals(groups, actual);
 	}
 
 	@Test
 	void 削除_1件() throws Exception {
 		追加();
 
-		assertTrue(target.delete(groups.get(1).getId(), users.get(1).getId()));
-		groups.remove(1);
-		List<String> expected = groups.stream()
-			.map(GroupBean::getName)
-			.collect(Collectors.toList()); 
-		List<String> actual = target.findGroupsByUserId(users.get(1).getId());
-		assertIterableEquals(expected, actual);
+		assertTrue(target.delete(groups.get(2).getId(), users.get(0).getId()));
+		relations.remove(2);
+
+		List<GroupUserRelationBean> actual = target.findAll();
+		assertIterableEquals(relations, actual);
 	}
 
 	@Test
 	void 削除_グループ指定() throws Exception {
-		List<String> expected = new ArrayList<String>();
-		for (UserBean user : users) {
-			GroupUserRelationBean relation = new GroupUserRelationBean(
-				groups.get(1).getId(),
-				user.getId()
-			);
-			assertTrue(target.create(relation));
-			expected.add(user.getName());
-		}
-		List<String> actual = target.findUsersByGroupId(groups.get(1).getId());
-		assertIterableEquals(expected, actual);
+		追加();
 
 		assertTrue(target.delete(groups.get(1).getId()));
-		actual = target.findUsersByGroupId(groups.get(1).getId());
+		List<UserBean> actual = target.findUsersByGroupId(groups.get(1).getId());
 		assertEquals(0, actual.size());
 	}
 
@@ -119,7 +119,7 @@ public class GroupUserRelationDaoTest {
 		追加();
 
 		assertTrue(target.delete(users.get(1).getId()));
-		List<String> actual = target.findGroupsByUserId(users.get(1).getId());
+		List<GroupBean> actual = target.findGroupsByUserId(users.get(1).getId());
 		assertEquals(0, actual.size());
 	}
 
@@ -155,9 +155,9 @@ public class GroupUserRelationDaoTest {
 		追加();
 		//クリア
 		assertTrue(target.truncate());
-		List<String> actual = target.findGroupsByUserId(users.get(1).getId());
+		List<GroupBean> actual = target.findGroupsByUserId(users.get(1).getId());
 		assertEquals(0, actual.size());
-		actual = target.findUsersByGroupId(groups.get(1).getId());
-		assertEquals(0, actual.size());
+		List<UserBean> actual2 = target.findUsersByGroupId(groups.get(1).getId());
+		assertEquals(0, actual2.size());
 	}
 }

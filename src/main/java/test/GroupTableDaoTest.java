@@ -12,21 +12,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import dao.GroupTableDAO;
+import dao.GroupUserRelationDAO;
 import dao.TransactionManager;
 import model.GroupBean;
 
 public class GroupTableDaoTest {
 	private TransactionManager trans = null;
+	private GroupUserRelationDAO relationDAO = null;
 	private GroupTableDAO target = null;
 
 	@BeforeEach
 	public void setUp() throws SQLException, IOException {
 		trans = new TransactionManager();
+		relationDAO = new GroupUserRelationDAO(trans);
 		target = new GroupTableDAO(trans);
 	}
 
 	@AfterEach
 	public void tearDown() throws SQLException {
+		relationDAO = null;
 		target = null;
 		// トランザクションのロールバック
 		if (trans != null) {
@@ -38,9 +42,9 @@ public class GroupTableDaoTest {
 	@Test
 	void 存在するデータ取得() throws Exception {
 		GroupBean expected = new GroupBean("hogehoge", "テスト");
-		int id = target.create(expected);
-		expected.setId(id);
-		GroupBean actual = target.find(id);
+		assertTrue(target.create(expected));
+		GroupBean actual = target.find(expected.getId());
+		assertNotEquals(0, actual.getId());
 		assertEquals(expected, actual);
 	}
 
@@ -59,8 +63,7 @@ public class GroupTableDaoTest {
 		// 追加
 		GroupBean group = new GroupBean("hogehoge", "テスト");
 		List<GroupBean> expected = target.findAll();
-		int id = target.create(group);
-		group.setId(id);
+		assertTrue(target.create(group));
 		expected.add(group);
 		List<GroupBean> actual = target.findAll();
 		assertEquals(expected.size(), actual.size());
@@ -68,7 +71,7 @@ public class GroupTableDaoTest {
 
 		// 削除
 		expected.remove(expected.size() - 1);
-		assertTrue(target.delete(id));
+		assertTrue(target.delete(group.getId()));
 		actual = target.findAll();
 		assertEquals(expected.size(), actual.size());
 		assertIterableEquals(expected, actual);
@@ -80,9 +83,13 @@ public class GroupTableDaoTest {
 		OptionalInt maxId = expected.stream()
 				.mapToInt(GroupBean::getId)
 				.max(); // 最大値を求める
-		GroupBean group = new GroupBean(maxId.getAsInt()+100, "hogehoge", "テスト");
-		int id = target.create(group);
-		assertEquals(maxId.getAsInt()+100, id);
+		int id = 1;
+		if(maxId.isPresent()) {
+			id = maxId.getAsInt()+100;
+		}
+		GroupBean group = new GroupBean(id, "hogehoge", "テスト");
+		assertTrue(target.create(group));
+		assertEquals(id, group.getId());
 		expected.add(group);
 		List<GroupBean> actual = target.findAll();
 		assertIterableEquals(expected, actual);
@@ -98,6 +105,9 @@ public class GroupTableDaoTest {
 		// 現データを取得
 		List<GroupBean> expected = target.findAll();
 
+		// キー制約のため連携テーブルクリア
+		relationDAO.truncate();
+
 		// クリア
 		assertTrue(target.truncate(expected.size()+1));
 		List<GroupBean> actual = target.findAll();
@@ -105,9 +115,8 @@ public class GroupTableDaoTest {
 
 		// 自動採番のリセット確認
 		GroupBean group = new GroupBean("hogehoge", "テスト");
-		int id = target.create(group);
-		group.setId(id);
-		assertEquals(expected.size()+1, id);
+		assertTrue(target.create(group));
+		assertEquals(expected.size()+1, group.getId());
 		actual = target.findAll();
 		assertEquals(group, actual.get(0));
 	}

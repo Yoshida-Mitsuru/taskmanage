@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import constants.Constants;
+import model.GroupBean;
 import model.GroupUserRelationBean;
+import model.UserBean;
 
 public class GroupUserRelationDAO {
 	private final String USER_GROUP_RELATION = Constants.USER_GROUP_RELATION;
@@ -20,17 +22,44 @@ public class GroupUserRelationDAO {
 		this.trans = trans;
 	}
 
-	public List<String> findGroupsByUserId(String userId) throws SQLException {
-		List<String> groupList = new ArrayList<String>();
+	public List<GroupUserRelationBean> findAll() throws SQLException {
+		List<GroupUserRelationBean> relationList = new ArrayList<GroupUserRelationBean>();
 		try {
-			String sql = "SELECT G.NAME AS GROUP_NAME FROM "+GROUP_TABLE+" G"
+			String sql = "SELECT GROUP_ID, USER_ID FROM " + USER_GROUP_RELATION
+					+ " ORDER BY GROUP_ID, USER_ID";
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+			  	ResultSet rs = pStmt.executeQuery();
+				while (rs.next()) {
+			  		GroupUserRelationBean relation = new GroupUserRelationBean(
+			  			rs.getInt("GROUP_ID"),
+			  			rs.getString("USER_ID")
+			  		);
+			  		relationList.add(relation);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return relationList;
+	}
+
+	public List<GroupBean> findGroupsByUserId(String userId) throws SQLException {
+		List<GroupBean> groupList = new ArrayList<GroupBean>();
+		try {
+			String sql = "SELECT G.ID, G.NAME, G.DESCRIPTION FROM "+GROUP_TABLE+" G"
 					+ " JOIN "+USER_GROUP_RELATION+" UG ON G.ID = UG.GROUP_ID"
 					+ " WHERE UG.USER_ID = ? ORDER BY G.ID";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 			  	pStmt.setString(1, userId);
 			  	ResultSet rs = pStmt.executeQuery();
 				while (rs.next()) {
-					groupList.add(rs.getString("GROUP_NAME"));
+			  		GroupBean group = new GroupBean(
+			  			rs.getInt("ID"),
+			  			rs.getString("NAME"),
+			  			rs.getString("DESCRIPTION")
+			  		);
+			  		groupList.add(group);
 				}
 			}
 		} catch (SQLException e) {
@@ -40,24 +69,32 @@ public class GroupUserRelationDAO {
 		return groupList;
 	}
 
-	public List<String> findUsersByGroupId(int groupId) throws SQLException {
-		List<String> groupList = new ArrayList<String>();
+	public List<UserBean> findUsersByGroupId(int groupId) throws SQLException {
+		List<UserBean> userList = new ArrayList<UserBean>();
 		try {
-			String sql = "SELECT U.NAME AS USER_NAME FROM "+USER_TABLE+" U"
+			String sql = "SELECT U.ID, U.PASSWORD, U.NAME, U.EMAIL, U.ROLE"
+					+ " FROM "+USER_TABLE+" U"
 					+ " JOIN "+USER_GROUP_RELATION+" UG ON U.ID = UG.USER_ID"
 					+ " WHERE UG.GROUP_ID = ? ORDER BY U.ID";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 			  	pStmt.setInt(1, groupId);
 			  	ResultSet rs = pStmt.executeQuery();
 				while (rs.next()) {
-					groupList.add(rs.getString("USER_NAME"));
+					UserBean user = new UserBean(
+							rs.getString("ID"),
+							rs.getString("PASSWORD"),
+							rs.getString("NAME"),
+							rs.getString("EMAIL"),
+							rs.getInt("ROLE")
+						);
+					userList.add(user);
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return groupList;
+		return userList;
 	}
 
 	public boolean create(GroupUserRelationBean relation) throws SQLException {

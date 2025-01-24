@@ -60,7 +60,7 @@ public class GroupTableDAO {
 		}
 	}
 
-	public int create(GroupBean group) throws SQLException {
+	public boolean create(GroupBean group) throws SQLException {
 		try {
 			if(group.getId() == 0) {
 				// ID自動採番
@@ -72,7 +72,8 @@ public class GroupTableDAO {
 					if (affectedRows > 0) {
 						try (ResultSet res = pStmt.getGeneratedKeys()) {
 							if (res.next()) {
-								return res.getInt(1);
+								group.setId(res.getInt(1));
+								return true;
 							}
 						}
 					}
@@ -86,11 +87,11 @@ public class GroupTableDAO {
 					pStmt.setString(3, group.getDescription());
 					int affectedRows = pStmt.executeUpdate();
 					if (affectedRows > 0) {
-						return group.getId();
+						return true;
 					}
 				}
 			}
-			return -1;
+			return false;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new SQLException("すでに存在するデータです");

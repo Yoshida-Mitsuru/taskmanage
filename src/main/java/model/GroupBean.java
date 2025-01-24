@@ -44,4 +44,13 @@ public class GroupBean implements Serializable {
 	public int hashCode() {
 		  return Objects.hash(id, name, description);
 	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", description='" + description + '\'' +
+				'}';
+	}
 }
