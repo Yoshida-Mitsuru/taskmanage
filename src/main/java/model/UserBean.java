@@ -7,15 +7,15 @@ import constants.Constants;
 import constants.Constants.ROLE;
 
 public class UserBean implements Serializable {
-	private String userId;		// ID
+	private String id;			// ID
 	private String password;		// パスワード
 	private String name;			// ユーザー名
 	private String email;		// EMail
 	private int role;			// 権限
 
 	public UserBean() { }
-	public UserBean(String userId, String password, String name, String email, int role) {
-		this.userId = userId;
+	public UserBean(String id, String password, String name, String email, int role) {
+		this.id = id;
 		this.password = password;
 		this.name = name;
 		this.email = email;
@@ -33,7 +33,7 @@ public class UserBean implements Serializable {
 	public void setRole(int role) {
 		this.role = role;
 	}
-	public String getId() { return userId; }
+	public String getId() { return id; }
 	public String getPassword() { return password; }
 	public String getName() { return name; }
 	public String getEmail() { return email; }
@@ -50,7 +50,7 @@ public class UserBean implements Serializable {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		UserBean userBean = (UserBean) o;
-		return userId.equals(userBean.userId)
+		return id.equals(userBean.id)
 			&& password.equals(userBean.password)
 			&& name.equals(userBean.name)
 			&& email.equals(userBean.email)
@@ -59,6 +59,17 @@ public class UserBean implements Serializable {
 
 	@Override
 	public int hashCode() {
-		  return Objects.hash(userId, password, name, email, role);
+		  return Objects.hash(id, password, name, email, role);
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "{" +
+			"id='" + id + '\'' +
+			", password='" + password + '\'' +
+			", name='" + name + '\'' +
+			", email='" + email + '\'' +
+			", role='" + role + '\'' +
+			'}';
 	}
 }
