@@ -48,9 +48,9 @@ public class GroupBean implements Serializable {
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "{" +
-				"id='" + id + '\'' +
-				", name='" + name + '\'' +
-				", description='" + description + '\'' +
-				'}';
+			"id='" + id + '\'' +
+			", name='" + name + '\'' +
+			", description='" + description + '\'' +
+			'}';
 	}
 }

@@ -38,8 +38,8 @@ public class GroupUserRelationBean implements Serializable {
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "{" +
-				"groupId='" + groupId + '\'' +
-				", userId='" + userId + '\'' +
-				'}';
+			"groupId='" + groupId + '\'' +
+			", userId='" + userId + '\'' +
+			'}';
 	}
 }

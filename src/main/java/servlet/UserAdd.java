@@ -15,7 +15,7 @@ public class UserAdd extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// ユーザー編集画面にフォワード
+		// ユーザー新規追加画面にフォワード
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/userAdd.jsp");
 		dispatcher.forward(request, response);
 	}
