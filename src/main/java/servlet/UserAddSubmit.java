@@ -32,10 +32,10 @@ public class UserAddSubmit extends HttpServlet {
 		boolean isSuccess = false;
 		try (TransactionManager trans = new TransactionManager()) {
 			UserTableDAO userTableDAO = new UserTableDAO(trans);
-			userTableDAO.create(user);
-			trans.commit();
-			message = "正常に登録されました";
-			isSuccess = true;
+			if(isSuccess = userTableDAO.create(user)) {
+				trans.commit();
+				message = "正常に登録されました";
+			}
 		} catch (SQLException e) {
 			if(e.getMessage() == "すでに存在するデータです") {
 				message = "すでに存在するデータです";
