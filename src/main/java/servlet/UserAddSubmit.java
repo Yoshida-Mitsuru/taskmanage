@@ -21,14 +21,20 @@ public class UserAddSubmit extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String message = "";
-		// リクエストパラメータの取得
-		request.setCharacterEncoding("UTF-8");
-		String id = request.getParameter("id");
-		String password = request.getParameter("password");
-		String name = request.getParameter("name");
-		String email = request.getParameter("email");
-		int role = Integer.parseInt(request.getParameter("role"));
-		UserBean user = new UserBean(id, password, name, email, role);
+		UserBean user = null;
+		try {
+			// リクエストパラメータの取得
+			request.setCharacterEncoding("UTF-8");
+			String id = request.getParameter("id");
+			String password = request.getParameter("password");
+			String name = request.getParameter("name");
+			String email = request.getParameter("email");
+			int role = Integer.parseInt(request.getParameter("role"));
+			user = new UserBean(id, password, name, email, role);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			throw new ServletException("エラーが発生しました");
+		}
 		boolean isSuccess = false;
 		try (TransactionManager trans = new TransactionManager()) {
 			UserTableDAO userTableDAO = new UserTableDAO(trans);
