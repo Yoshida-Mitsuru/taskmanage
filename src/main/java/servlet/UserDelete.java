@@ -3,6 +3,7 @@ package servlet;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import dao.GroupUserRelationDAO;
 import dao.TransactionManager;
 import dao.UserTableDAO;
 import jakarta.servlet.ServletException;
@@ -24,8 +25,10 @@ public class UserDelete extends HttpServlet {
 		String id = request.getParameter("id");
 
 		try (TransactionManager trans = new TransactionManager()) {
+			// 関係テーブルから消す
+			GroupUserRelationDAO relationDAO = new GroupUserRelationDAO(trans);
 			UserTableDAO userTableDAO = new UserTableDAO(trans);
-			if(userTableDAO.delete(id)) {
+			if(relationDAO.delete(id) && userTableDAO.delete(id)) {
 				message = "正常に削除されました";
 				trans.commit();
 			} else {
