@@ -134,6 +134,10 @@ public class GroupTableDAO {
 		return true;
 	}
 
+	public boolean truncate() throws SQLException {
+		return truncate(1);
+	}
+
 	public boolean truncate(int initialId) throws SQLException {
 		try {
 			// 外部キー制約のためTRUNCATE不可

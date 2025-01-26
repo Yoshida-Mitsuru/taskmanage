@@ -2,7 +2,9 @@ package servlet;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
+import dao.GroupUserRelationDAO;
 import dao.TransactionManager;
 import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
@@ -11,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.GroupWithRelationBean;
 import model.UserBean;
 
 @WebServlet("/userEdit")
@@ -27,6 +30,11 @@ public class UserEdit extends HttpServlet {
 			UserBean user = userTableDAO.find(id);
 			// ユーザー情報をリクエストスコープに保存
 			request.setAttribute("editUser", user);
+
+			GroupUserRelationDAO relationDAO = new GroupUserRelationDAO(trans);
+			List<GroupWithRelationBean> groupList = relationDAO.getGroupsWithRelationByUserId(user.getId());
+			// グループリストをリクエストスコープに保存
+			request.setAttribute("groupList", groupList);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new ServletException("対象のユーザーが存在しません");

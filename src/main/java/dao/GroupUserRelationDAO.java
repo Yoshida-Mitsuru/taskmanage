@@ -9,6 +9,7 @@ import java.util.List;
 import constants.Constants;
 import model.GroupBean;
 import model.GroupUserRelationBean;
+import model.GroupWithRelationBean;
 import model.UserBean;
 
 public class GroupUserRelationDAO {
@@ -95,6 +96,38 @@ public class GroupUserRelationDAO {
 			return null;
 		}
 		return userList;
+	}
+
+	public List<GroupWithRelationBean> getGroupsWithRelationByUserId(String userId) throws SQLException {
+		List<GroupWithRelationBean> groupList = new ArrayList<GroupWithRelationBean>();
+		try {
+			String sql ="SELECT G.ID, G.NAME, G.DESCRIPTION,"
+				+ " CASE"
+				+ "   WHEN R.GROUP_ID IS NOT NULL THEN TRUE"
+				+ "   ELSE FALSE"
+				+ " END AS MEMBERSHIP"
+				+ " FROM "+GROUP_TABLE+" G"
+				+ " LEFT JOIN "+USER_GROUP_RELATION+" R ON G.ID = R.GROUP_ID AND R.USER_ID = ?"
+				+ " ORDER BY G.ID";
+
+			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
+			  	pStmt.setString(1, userId);
+			  	ResultSet rs = pStmt.executeQuery();
+				while (rs.next()) {
+					GroupWithRelationBean group = new GroupWithRelationBean(
+			  			rs.getInt("ID"),
+			  			rs.getString("NAME"),
+			  			rs.getString("DESCRIPTION"),
+			  			rs.getBoolean("MEMBERSHIP")
+			  		);
+			  		groupList.add(group);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return groupList;
 	}
 
 	public boolean create(GroupUserRelationBean relation) throws SQLException {

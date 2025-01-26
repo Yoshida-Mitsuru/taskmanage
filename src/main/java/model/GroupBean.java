@@ -34,10 +34,10 @@ public class GroupBean implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		GroupBean groupBean = (GroupBean) o;
-		return id == groupBean.id
-			&& name.equals(groupBean.name)
-			&& description.equals(groupBean.description);
+		GroupBean that = (GroupBean) o;
+		return id == that.id
+			&& name.equals(that.name)
+			&& description.equals(that.description);
 	}
 
 	@Override

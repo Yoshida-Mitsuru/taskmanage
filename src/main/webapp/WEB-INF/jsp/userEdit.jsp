@@ -47,6 +47,23 @@
   <c:if test="${not empty message}">
     <p><c:out value="${message}"/></p>
   </c:if>
+  <p>所属グループ</p>
+  <form action="userMembershipsSubmit" method="post">
+    <input type="hidden" name="id" id="id" value="${editUser.id}">
+    <table border="1">
+      <tr>
+        <th>グループ名</th>
+        <th>所属</th>
+      </tr>
+      <c:forEach var="group" items="${groupList}">
+        <tr>
+          <td>${group.name}</td>
+          <td><input type="checkbox" name="membership" value="${group.id}" <c:if test="${group.membership}">checked</c:if>></td>
+        </tr>
+      </c:forEach>
+    </table>
+    <button type="submit">所属グループ更新</button>
+  </form>
   <a href="userList">ユーザー一覧に戻る</a>
 </body>
 </html>

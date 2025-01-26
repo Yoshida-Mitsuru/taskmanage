@@ -25,9 +25,9 @@ public class GroupUserRelationBean implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		GroupUserRelationBean groupBean = (GroupUserRelationBean) o;
-		return groupId == groupBean.groupId
-			&& userId.equals(groupBean.userId);
+		GroupUserRelationBean that = (GroupUserRelationBean) o;
+		return groupId == that.groupId
+			&& userId.equals(that.userId);
 	}
 
 	@Override

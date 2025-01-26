@@ -36,7 +36,7 @@ public class GroupList extends HttpServlet {
 		try (TransactionManager trans = new TransactionManager()) {
 			GroupTableDAO groupTableDAO = new GroupTableDAO(trans);
 			List<GroupBean> groupList = groupTableDAO.findAll();
-			// ユーザーリストをリクエストスコープに保存
+			// グループリストをリクエストスコープに保存
 			request.setAttribute("groupList", groupList);
 		} catch (SQLException e) {
 	  		throw new ServletException();
@@ -44,7 +44,7 @@ public class GroupList extends HttpServlet {
 
 		// メッセージをリクエストスコープに保存
 		request.setAttribute("message", message);
-		// メインメニュー画面にフォワード
+		// グループ一覧画面にフォワード
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/groupList.jsp");
 		dispatcher.forward(request, response);
 	}

@@ -49,12 +49,12 @@ public class UserBean implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		UserBean userBean = (UserBean) o;
-		return id.equals(userBean.id)
-			&& password.equals(userBean.password)
-			&& name.equals(userBean.name)
-			&& email.equals(userBean.email)
-			&& role == userBean.role;
+		UserBean that = (UserBean) o;
+		return id.equals(that.id)
+			&& password.equals(that.password)
+			&& name.equals(that.name)
+			&& email.equals(that.email)
+			&& role == that.role;
 	}
 
 	@Override
