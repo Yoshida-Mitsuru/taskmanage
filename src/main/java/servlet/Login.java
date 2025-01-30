@@ -48,8 +48,8 @@ public class Login extends HttpServlet {
 			HttpSession session = request.getSession();
 			session.setAttribute("loginUser", user);
 	
-			// メインメニュー画面にリダイレクト
-			response.sendRedirect("mainMenu");
+			// メイン画面にリダイレクト
+			response.sendRedirect("main.jsp");
 		} else {
 			// ログイン失敗画面にフォワード
 			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/jsp/login.jsp");

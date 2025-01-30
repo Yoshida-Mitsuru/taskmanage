@@ -9,9 +9,12 @@ import java.util.List;
 
 import constants.Constants;
 import model.TaskBean;
+import model.TaskWithNameBean;
 
 public class TaskTableDAO {
 	private final String TASK_TABLE = Constants.TASK_TABLE;
+	private final String USER_TABLE = Constants.USER_TABLE;
+	private final String GROUP_TABLE = Constants.GROUP_TABLE;
 	private final String TABLE_COLUMNS = "ID, SUBJECT, CONTENT, POSTUSER_ID, EXPECT_DATE, END_DATE, GROUP_ID, STATUS, PRIORITY";
 	private final TransactionManager trans;
 
@@ -48,13 +51,17 @@ public class TaskTableDAO {
 		return taskList;
 	}
 
-	public TaskBean find(int id) throws SQLException {
-		String sql = "SELECT " + TABLE_COLUMNS + " FROM " + TASK_TABLE + " WHERE ID=?";
+	public TaskWithNameBean find(int id) throws SQLException {
+		String sql = "SELECT T." + TABLE_COLUMNS + ", U.NAME AS POSTUSER_NAME, G.NAME AS GROUP_NAME"
+				+ " FROM " + TASK_TABLE + " T"
+				+ " LEFT JOIN " + USER_TABLE + " U ON U.ID = T.POSTUSER_ID"
+				+ " LEFT JOIN " + GROUP_TABLE + " G ON G.ID = T.GROUP_ID"
+				+ " WHERE T.ID = ? ORDER BY T.ID";
 		try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 			pStmt.setInt(1, id);
 			ResultSet rs = pStmt.executeQuery();
 			if (rs.next()) {
-				return new TaskBean(
+				return new TaskWithNameBean(
 						rs.getInt("ID"),
 						rs.getString("SUBJECT"),
 						rs.getString("CONTENT"),
@@ -63,7 +70,9 @@ public class TaskTableDAO {
 						rs.getDate("END_DATE"),
 						rs.getInt("GROUP_ID"),
 						rs.getInt("STATUS"),
-						rs.getInt("PRIORITY"));
+						rs.getInt("PRIORITY"),
+						rs.getString("POSTUSER_NAME"),
+						rs.getString("GROUP_NAME"));
 			} else {
 				throw new SQLException("データが存在しません");
 			}
