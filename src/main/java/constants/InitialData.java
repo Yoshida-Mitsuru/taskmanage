@@ -5,8 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import constants.Constants.ROLE;
+import constants.Constants.TASK_PRIORITY;
+import constants.Constants.TASK_STATUS;
 import model.GroupBean;
 import model.GroupUserRelationBean;
+import model.TaskBean;
 import model.UserBean;
 
 public final class InitialData {
@@ -36,6 +39,22 @@ public final class InitialData {
 			new GroupUserRelationBean(2, "user1"),
 			new GroupUserRelationBean(3, "user"),
 			new GroupUserRelationBean(3, "user2")
+		)
+	);
+
+	public final static List<TaskBean> taskList = Collections.unmodifiableList(
+		Arrays.asList(
+			new TaskBean(
+				1,
+				"件名1",
+				"内容1",
+				"user1",
+				null,
+				null,
+				2,
+				TASK_STATUS.NOT_STARTED.ordinal(),
+				TASK_PRIORITY.NORMAL.ordinal()
+			)
 		)
 	);
 
