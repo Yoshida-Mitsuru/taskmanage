@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import constants.InitialData;
 import dao.GroupTableDAO;
 import dao.GroupUserRelationDAO;
+import dao.TaskTableDAO;
 import dao.TransactionManager;
 import dao.UserTableDAO;
 import jakarta.servlet.RequestDispatcher;
@@ -17,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.GroupBean;
 import model.GroupUserRelationBean;
+import model.TaskBean;
 import model.UserBean;
 
 @WebServlet("/dataInitialize")
@@ -24,7 +26,8 @@ public class dataInitialize extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		String message = "";
 		try (TransactionManager trans = new TransactionManager()) {
 			// グループユーザー関係テーブルクリア
@@ -38,13 +41,19 @@ public class dataInitialize extends HttpServlet {
 			}
 			// グループテーブル
 			GroupTableDAO groupTableDAO = new GroupTableDAO(trans);
-			groupTableDAO.truncate(InitialData.groupList.size()+1);
+			groupTableDAO.truncate(InitialData.groupList.size() + 1);
 			for (GroupBean group : InitialData.groupList) {
 				groupTableDAO.create(group);
 			}
 			// グループユーザー関係テーブル
 			for (GroupUserRelationBean relation : InitialData.groupUserRelation) {
 				groupUserRelationDAO.create(relation);
+			}
+			// タスクテーブル
+			TaskTableDAO taskTableDAO = new TaskTableDAO(trans);
+			taskTableDAO.truncate(InitialData.groupList.size() + 1);
+			for (TaskBean task : InitialData.taskList) {
+				taskTableDAO.create(task);
 			}
 
 			trans.commit();
