@@ -13,28 +13,60 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import constants.Constants.ROLE;
 import constants.Constants.TASK_PRIORITY;
 import constants.Constants.TASK_STATUS;
+import dao.GroupTableDAO;
+import dao.GroupUserRelationDAO;
 import dao.TaskTableDAO;
 import dao.TransactionManager;
+import dao.UserTableDAO;
+import model.GroupBean;
 import model.TaskBean;
+import model.TaskWithNameBean;
+import model.UserBean;
 
 public class TaskTableDaoTest {
 	private TransactionManager trans = null;
 	private TaskTableDAO target = null;
+	private GroupUserRelationDAO relationDao = null;
+	private UserTableDAO userDao = null;
+	private GroupTableDAO groupDao = null;
 	private List<TaskBean> tasks = null;
+	private List<GroupBean> groups = null;
+	private List<UserBean> users = null;
 
 	@BeforeEach
 	public void setUp() throws SQLException, IOException {
 		trans = new TransactionManager();
 		target = new TaskTableDAO(trans);
+		relationDao = new GroupUserRelationDAO(trans);
+		userDao = new UserTableDAO(trans);
+		groupDao = new GroupTableDAO(trans);
+		relationDao.truncate();
 
 		// テストデータ
+		users = new ArrayList<>(Arrays.asList(
+				new UserBean("testuser1", "111", "富山　太郎", "", ROLE.USER.ordinal()),
+				new UserBean("testuser2", "222", "立山　花子", "", ROLE.USER.ordinal()),
+				new UserBean("testuser3", "333", "石川　次郎", "", ROLE.USER.ordinal())));
+		userDao.truncate();
+		for (UserBean user : users) {
+			userDao.create(user);
+		}
+		groups = new ArrayList<>(Arrays.asList(
+				new GroupBean("TEST1グループ", "TEST1"),
+				new GroupBean("TEST2グループ", "TEST2"),
+				new GroupBean("TEST3グループ", "TEST3")));
+		groupDao.truncate();
+		for (GroupBean group : groups) {
+			groupDao.create(group);
+		}
 		tasks = new ArrayList<>(Arrays.asList(
 			new TaskBean(
 				"件名1",
 				"内容1",
-				"user1",
+				"testuser1",
 				null,
 				null,
 				2,
@@ -44,7 +76,7 @@ public class TaskTableDaoTest {
 			new TaskBean(
 				"件名2",
 				"内容2",
-				"user1",
+				"testuser1",
 				null,
 				null,
 				2,
@@ -54,7 +86,7 @@ public class TaskTableDaoTest {
 			new TaskBean(
 				"件名3",
 				"内容3",
-				"user2",
+				"testuser1",
 				null,
 				null,
 				2,
@@ -64,7 +96,7 @@ public class TaskTableDaoTest {
 			new TaskBean(
 				"件名4",
 				"内容4",
-				"user3",
+				"testuser1",
 				null,
 				null,
 				2,
@@ -85,11 +117,20 @@ public class TaskTableDaoTest {
 	}
 
 	@Test
+	void 追加() throws Exception {
+		for (TaskBean task : tasks) {
+			assertTrue(target.create(task));
+		}
+	}
+
+	@Test
 	void 取得１件_存在するデータ() throws Exception {
 		追加();
-		TaskBean actual = target.find(tasks.get(0).getId());
+		TaskWithNameBean actual = target.find(tasks.get(0).getId());
 		assertNotEquals(0, actual.getId());
-		assertEquals(tasks.get(0), actual);
+		TaskWithNameBean expect = new TaskWithNameBean(tasks.get(0), users.get(0).getName(), groups.get(1).getName());
+		expect.setId(actual.getId());
+		assertEquals(expect, actual);
 	}
 
 	@Test
@@ -101,15 +142,9 @@ public class TaskTableDaoTest {
 	}
 
 	@Test
-	void 追加() throws Exception {
-		for (TaskBean task : tasks) {
-			assertTrue(target.create(task));
-		}
-	}
-
-	@Test
 	void 件数取得() throws Exception {
-		assertEquals(0, target.getListCount());
+		List<TaskBean> expected = target.findAll();
+		assertEquals(expected.size(), target.getListCount());
 	}
 
 	@Test

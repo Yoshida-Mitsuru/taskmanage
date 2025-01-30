@@ -17,8 +17,8 @@
 <h1><%= Constants.APP_NAME %></h1>
 <h2>ログインしてください</h2>
 <form action="login" method="post">
-ユーザーID：<input type="text" name="id"><br>
-パスワード：<input type="password" name="pass"><br>
+ユーザーID：<input type="text" name="id" value="sa"><br>
+パスワード：<input type="password" name="pass" value="sa"><br>
 <button type="submit">ログイン</button>
 </form>
 <hr>
