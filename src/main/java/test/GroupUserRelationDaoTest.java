@@ -44,8 +44,7 @@ public class GroupUserRelationDaoTest {
 		users = new ArrayList<>(Arrays.asList(
 				new UserBean("testuser1", "111", "富山　太郎", "", ROLE.USER.ordinal()),
 				new UserBean("testuser2", "222", "立山　花子", "", ROLE.USER.ordinal()),
-				new UserBean("testuser3", "333", "石川　次郎", "", ROLE.USER.ordinal())
-			));
+				new UserBean("testuser3", "333", "石川　次郎", "", ROLE.USER.ordinal())));
 		userDao.truncate();
 		for (UserBean user : users) {
 			userDao.create(user);
@@ -53,8 +52,7 @@ public class GroupUserRelationDaoTest {
 		groups = new ArrayList<>(Arrays.asList(
 				new GroupBean("TEST1グループ", "TEST1"),
 				new GroupBean("TEST2グループ", "TEST2"),
-				new GroupBean("TEST3グループ", "TEST3")
-			));
+				new GroupBean("TEST3グループ", "TEST3")));
 		groupDao.truncate();
 		for (GroupBean group : groups) {
 			groupDao.create(group);
@@ -64,8 +62,7 @@ public class GroupUserRelationDaoTest {
 				new GroupUserRelationBean(groups.get(1).getId(), users.get(0).getId()),
 				new GroupUserRelationBean(groups.get(2).getId(), users.get(0).getId()),
 				new GroupUserRelationBean(groups.get(2).getId(), users.get(1).getId()),
-				new GroupUserRelationBean(groups.get(2).getId(), users.get(2).getId())
-			));
+				new GroupUserRelationBean(groups.get(2).getId(), users.get(2).getId())));
 	}
 
 	@AfterEach
@@ -103,10 +100,9 @@ public class GroupUserRelationDaoTest {
 	void ユーザーIDから存在フラグ付きグループ取得() throws Exception {
 		追加();
 		List<GroupWithRelationBean> expected = new ArrayList<>(Arrays.asList(
-			new GroupWithRelationBean(groups.get(0), false),
-			new GroupWithRelationBean(groups.get(1), false),
-			new GroupWithRelationBean(groups.get(2), true)
-		));
+				new GroupWithRelationBean(groups.get(0), false),
+				new GroupWithRelationBean(groups.get(1), false),
+				new GroupWithRelationBean(groups.get(2), true)));
 
 		List<GroupWithRelationBean> actual = target.getGroupsWithRelationByUserId(users.get(2).getId());
 		assertNotNull(actual);
@@ -145,12 +141,11 @@ public class GroupUserRelationDaoTest {
 	@Test
 	void キー制約違反_グループ() throws Exception {
 		OptionalInt maxId = groups.stream()
-			.mapToInt(GroupBean::getId) // IDをintストリームに変換
-			.max(); // 最大値を求める
+				.mapToInt(GroupBean::getId) // IDをintストリームに変換
+				.max(); // 最大値を求める
 		GroupUserRelationBean relation = new GroupUserRelationBean(
-			maxId.getAsInt()+1,
-			users.get(1).getId()
-		);
+				maxId.getAsInt() + 1,
+				users.get(1).getId());
 		SQLException exception = assertThrows(SQLException.class, () -> {
 			target.create(relation);
 		});
@@ -160,9 +155,8 @@ public class GroupUserRelationDaoTest {
 	@Test
 	void キー制約違反_ユーザー() throws Exception {
 		GroupUserRelationBean relation = new GroupUserRelationBean(
-			groups.get(1).getId(),
-			"fugafuga"
-		);
+				groups.get(1).getId(),
+				"fugafuga");
 		SQLException exception = assertThrows(SQLException.class, () -> {
 			target.create(relation);
 		});

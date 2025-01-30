@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.GroupBean;
 import model.GroupUserRelationBean;
-import model.UserBean;
 
 @WebServlet("/userMembershipsSubmit")
 public class UserMembershipsSubmit extends HttpServlet {
@@ -24,7 +23,6 @@ public class UserMembershipsSubmit extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String message = "";
-		UserBean user = null;
 		// リクエストパラメータの取得
 		request.setCharacterEncoding("UTF-8");
 		String userId = request.getParameter("id");
@@ -36,12 +34,12 @@ public class UserMembershipsSubmit extends HttpServlet {
 				memberships.add(Integer.parseInt(membershipValue));
 			}
 		}
+		// TODO logicの分離
 		try (TransactionManager trans = new TransactionManager()) {
 			GroupUserRelationDAO relationDAO = new GroupUserRelationDAO(trans);
 			List<GroupBean> groups = relationDAO.findGroupsByUserId(userId);
 			// 追加（membershipにあり、関係テーブルにない）
 			for (int groupId : memberships) {
-				// idがgroupIdのデータが含まれているか調べる
 				boolean contains = groups.stream()
 					.anyMatch(group -> group.getId() == groupId);
 				if(!contains) {

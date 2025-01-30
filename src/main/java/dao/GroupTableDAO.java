@@ -40,23 +40,22 @@ public class GroupTableDAO {
 			e.printStackTrace();
 			return null;
 		}
-		return groupList ;
+		return groupList;
 	}
 
 	public GroupBean find(int id) throws SQLException {
-		String sql = "SELECT "+TABLE_COLUMNS+" FROM "+GROUP_TABLE+" WHERE ID=?";
+		String sql = "SELECT " + TABLE_COLUMNS + " FROM " + GROUP_TABLE + " WHERE ID=?";
 		try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
-		  	pStmt.setInt(1, id);
-		  	ResultSet rs = pStmt.executeQuery();
-		  	if (rs.next()) {
-		  		return new GroupBean(
-			  			rs.getInt("ID"),
-			  			rs.getString("NAME"),
-			  			rs.getString("DESCRIPTION")
-			  		);
-		  	} else {
-		  		throw new SQLException("データが存在しません");
-		  	}
+			pStmt.setInt(1, id);
+			ResultSet rs = pStmt.executeQuery();
+			if (rs.next()) {
+				return new GroupBean(
+						rs.getInt("ID"),
+						rs.getString("NAME"),
+						rs.getString("DESCRIPTION"));
+			} else {
+				throw new SQLException("データが存在しません");
+			}
 		}
 	}
 
