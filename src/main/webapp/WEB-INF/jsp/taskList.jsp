@@ -38,8 +38,8 @@
         <td>${task.expectDate}</td>
         <td>${task.endDate}</td>
         <td>${task.groupName}</td>
-        <td>${task.status}</td>
-        <td>${task.priority}</td>
+        <td>${task.statusName}</td>
+        <td>${task.priorityName}</td>
         <td>
           <form action="taskEdit" method="post">
             <input type="hidden" name="id" value="${task.id}">
