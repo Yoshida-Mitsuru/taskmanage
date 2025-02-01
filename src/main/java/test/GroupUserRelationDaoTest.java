@@ -38,22 +38,21 @@ public class GroupUserRelationDaoTest {
 		target = new GroupUserRelationDAO(trans);
 		userDao = new UserTableDAO(trans);
 		groupDao = new GroupTableDAO(trans);
-		target.truncate();
 
 		// テストデータ追加
 		users = new ArrayList<>(Arrays.asList(
 				new UserBean("testuser1", "111", "富山　太郎", "", ROLE.USER.ordinal()),
 				new UserBean("testuser2", "222", "立山　花子", "", ROLE.USER.ordinal()),
 				new UserBean("testuser3", "333", "石川　次郎", "", ROLE.USER.ordinal())));
-		userDao.truncate();
 		for (UserBean user : users) {
+			target.delete(user.getId());
+			userDao.delete(user.getId());
 			userDao.create(user);
 		}
 		groups = new ArrayList<>(Arrays.asList(
 				new GroupBean("TEST1グループ", "TEST1"),
 				new GroupBean("TEST2グループ", "TEST2"),
 				new GroupBean("TEST3グループ", "TEST3")));
-		groupDao.truncate();
 		for (GroupBean group : groups) {
 			groupDao.create(group);
 		}
@@ -68,10 +67,17 @@ public class GroupUserRelationDaoTest {
 	@AfterEach
 	public void tearDown() throws SQLException {
 		target = null;
-		// トランザクションのロールバック
+		userDao = null;
+		groupDao = null;
 		if (trans != null) {
-			trans.rollback();
-			trans.close();
+			try {
+				trans.rollback(); // トランザクションのロールバック
+			} catch (SQLException e) {
+				System.err.println("ロールバック中にエラーが発生しました: " + e.getMessage());
+			} finally {
+				trans.close(); // コネクションを閉じる
+				trans = null;
+			}
 		}
 	}
 
@@ -84,9 +90,11 @@ public class GroupUserRelationDaoTest {
 
 	@Test
 	void 取得_全件() throws Exception {
+		List<GroupUserRelationBean> expect = target.findAll();
 		追加();
+		expect.addAll(relations);
 		List<GroupUserRelationBean> actual = target.findAll();
-		assertIterableEquals(relations, actual);
+		assertIterableEquals(expect, actual);
 	}
 
 	@Test
@@ -98,26 +106,30 @@ public class GroupUserRelationDaoTest {
 
 	@Test
 	void ユーザーIDから存在フラグ付きグループ取得() throws Exception {
+		List<GroupWithRelationBean> expect = target.getGroupsWithRelationByUserId(users.get(2).getId());
 		追加();
-		List<GroupWithRelationBean> expected = new ArrayList<>(Arrays.asList(
-				new GroupWithRelationBean(groups.get(0), false),
-				new GroupWithRelationBean(groups.get(1), false),
-				new GroupWithRelationBean(groups.get(2), true)));
+		for (GroupWithRelationBean group : expect) {
+			if(group.getId() == groups.get(2).getId()) {
+				group.setMembership(true);
+			}
+		}
 
 		List<GroupWithRelationBean> actual = target.getGroupsWithRelationByUserId(users.get(2).getId());
 		assertNotNull(actual);
-		assertIterableEquals(expected, actual);
+		assertIterableEquals(expect, actual);
 	}
 
 	@Test
 	void 削除_1件() throws Exception {
+		List<GroupUserRelationBean> expect = target.findAll();
 		追加();
+		relations.remove(2);
+		expect.addAll(relations);
 
 		assertTrue(target.delete(groups.get(2).getId(), users.get(0).getId()));
-		relations.remove(2);
 
 		List<GroupUserRelationBean> actual = target.findAll();
-		assertIterableEquals(relations, actual);
+		assertIterableEquals(expect, actual);
 	}
 
 	@Test

@@ -39,15 +39,17 @@ public final class InitialData {
 	public final static List<TaskBean> taskList = Collections.unmodifiableList(
 			Arrays.asList(
 					new TaskBean(
+							1,
 							"件名1",
 							"内容1",
 							"user1",
 							null,
 							null,
-							2,
+							1,
 							TASK_STATUS.NOT_STARTED.ordinal(),
 							TASK_PRIORITY.NORMAL.ordinal()),
 					new TaskBean(
+							2,
 							"件名2",
 							"内容2",
 							"user1",
@@ -57,6 +59,7 @@ public final class InitialData {
 							TASK_STATUS.IN_PROGRESS.ordinal(),
 							TASK_PRIORITY.HIGH.ordinal()),
 					new TaskBean(
+							3,
 							"件名3",
 							"内容3",
 							"user2",
@@ -66,12 +69,13 @@ public final class InitialData {
 							TASK_STATUS.SUSPENDED.ordinal(),
 							TASK_PRIORITY.URGENT.ordinal()),
 					new TaskBean(
+							4,
 							"件名4",
 							"内容4",
 							"user3",
 							null,
 							null,
-							2,
+							3,
 							TASK_STATUS.COMPLETED.ordinal(),
 							TASK_PRIORITY.LOW.ordinal())));
 

@@ -200,7 +200,6 @@ public class GroupUserRelationDAO {
 	public boolean truncate() throws SQLException {
 		try {
 			// TRUNCATEでは復元できないためDELETE
-			// String sql = "TRUNCATE TABLE "+USER_GROUP_RELATION;
 			String sql = "DELETE FROM "+USER_GROUP_RELATION;
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.executeUpdate();

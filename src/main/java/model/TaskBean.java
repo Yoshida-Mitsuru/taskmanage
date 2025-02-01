@@ -12,8 +12,8 @@ public class TaskBean implements Serializable {
 	private Date expectDate; // 完了予定日
 	private Date endDate; // 完了日
 	private int groupId; // 対象グループID
-	private int status; // 状態
-	private int priority; // 優先度
+	protected int status; // 状態
+	protected int priority; // 優先度
 
 	public TaskBean() {
 	}

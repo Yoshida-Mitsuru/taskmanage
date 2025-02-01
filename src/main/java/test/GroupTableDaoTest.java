@@ -84,11 +84,9 @@ public class GroupTableDaoTest {
 		OptionalInt maxId = expected.stream()
 				.mapToInt(GroupBean::getId)
 				.max(); // 最大値を求める
-		int id = 0;
+		int id = 1;
 		if (maxId.isPresent()) {
 			id = maxId.getAsInt() + 100;
-		} else {
-			id = 1;
 		}
 		testGroup.setId(id);
 		assertTrue(target.create(testGroup));
@@ -115,21 +113,12 @@ public class GroupTableDaoTest {
 
 	@Test
 	void テーブルクリア() throws Exception {
-		// 現データを取得
-		List<GroupBean> expected = target.findAll();
-
 		// キー制約のため連携テーブルクリア
 		relationDAO.truncate();
 
 		// クリア
-		assertTrue(target.truncate(expected.size() + 1));
+		assertTrue(target.truncate());
 		List<GroupBean> actual = target.findAll();
 		assertEquals(0, actual.size());
-
-		// 自動採番のリセット確認
-		assertTrue(target.create(testGroup));
-		assertEquals(expected.size() + 1, testGroup.getId());
-		actual = target.findAll();
-		assertEquals(testGroup, actual.get(0));
 	}
 }

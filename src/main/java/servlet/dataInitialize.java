@@ -41,7 +41,8 @@ public class dataInitialize extends HttpServlet {
 			}
 			// グループテーブル
 			GroupTableDAO groupTableDAO = new GroupTableDAO(trans);
-			groupTableDAO.truncate(InitialData.groupList.size() + 1);
+			groupTableDAO.truncate();
+			groupTableDAO.autoIncrementReset(InitialData.groupList.size() + 1);
 			for (GroupBean group : InitialData.groupList) {
 				groupTableDAO.create(group);
 			}
@@ -51,7 +52,8 @@ public class dataInitialize extends HttpServlet {
 			}
 			// タスクテーブル
 			TaskTableDAO taskTableDAO = new TaskTableDAO(trans);
-			taskTableDAO.truncate(InitialData.groupList.size() + 1);
+			taskTableDAO.truncate();
+			taskTableDAO.autoIncrementReset(InitialData.taskList.size() + 1);
 			for (TaskBean task : InitialData.taskList) {
 				taskTableDAO.create(task);
 			}

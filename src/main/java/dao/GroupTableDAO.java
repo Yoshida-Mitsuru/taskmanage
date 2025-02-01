@@ -134,18 +134,23 @@ public class GroupTableDAO {
 	}
 
 	public boolean truncate() throws SQLException {
-		return truncate(1);
-	}
-
-	public boolean truncate(int initialId) throws SQLException {
 		try {
 			// 外部キー制約のためTRUNCATE不可
 			String sql = "DELETE FROM "+GROUP_TABLE;
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.executeUpdate();
 			}
-			// 自動採番リセット
-			sql = "ALTER TABLE "+GROUP_TABLE+" ALTER COLUMN ID INT AUTO_INCREMENT("+initialId+")";
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean autoIncrementReset(int initialId) throws SQLException {
+		try {
+			// 自動採番リセット（実行時点でcommitされる。rollback不可）
+			String sql = "ALTER TABLE "+GROUP_TABLE+" ALTER COLUMN ID INT AUTO_INCREMENT("+initialId+")";
 			try (PreparedStatement pStmt = trans.getConnection().prepareStatement(sql)) {
 				pStmt.executeUpdate();
 			}

@@ -3,6 +3,8 @@ package model;
 import java.sql.Date;
 import java.util.Objects;
 
+import constants.Constants;
+
 public class TaskWithNameBean extends TaskBean {
 	private String userName; // ユーザー名
 	private String groupName; // グループ名
@@ -21,21 +23,20 @@ public class TaskWithNameBean extends TaskBean {
 		this.groupName = groupName;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
 	}
+	public String getUserName() {
+		return userName;
+	}
+	public String getGroupName() {
+		return groupName;
+	}
+	public String getStatusName() { return Constants.STATUS_NAME.get(status); }
+	public String getPriorityName() { return Constants.PRIORITY_NAME.get(priority); }
 
 	@Override
 	public boolean equals(Object o) {
