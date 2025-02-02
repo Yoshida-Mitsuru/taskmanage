@@ -12,13 +12,12 @@
 body {
 	margin: 0;
 	width: 100%;
-	height: 98vh;
 }
 
 .base {
 	display: flex;
 	flex-direction: column;
-	height: 100%;
+	height: 100vh;
 }
 
 .header-container {
@@ -31,12 +30,13 @@ body {
 	height: 100%;
 }
 
-.menu-container {
+#meneFrame {
+	width: 180px;
 	height: 100%;
 }
 
-.content-container {
-	width:100%;
+#contentFrame {
+	flex: 1;
 	height: 100%;
 }
 </style>
@@ -47,12 +47,8 @@ body {
 			<h1><%=Constants.APP_NAME%></h1>
 		</div>
 		<div class="middle-container">
-			<div class="menu-container">
-				<iframe src="mainMenu" width="180px" height="100%"></iframe>
-			</div>
-			<div class="content-container">
-				<iframe src="taskList" width="100%" height="100%"></iframe>
-			</div>
+			<iframe id="menuFrame" src="mainMenu" name="menuFrame"></iframe>
+			<iframe id="contentFrame" src="taskList" name="contentFrame"></iframe>
 		</div>
 	</div>
 </body>

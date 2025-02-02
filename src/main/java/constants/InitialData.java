@@ -30,6 +30,9 @@ public final class InitialData {
 
 	public final static List<GroupUserRelationBean> groupUserRelation = Collections.unmodifiableList(
 			Arrays.asList(
+					new GroupUserRelationBean(1, "sa"),
+					new GroupUserRelationBean(2, "sa"),
+					new GroupUserRelationBean(3, "sa"),
 					new GroupUserRelationBean(1, "user"),
 					new GroupUserRelationBean(2, "user"),
 					new GroupUserRelationBean(2, "user1"),

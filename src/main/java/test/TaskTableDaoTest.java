@@ -145,13 +145,11 @@ public class TaskTableDaoTest {
 
 	@Test
 	void 取得１件_ID引き() throws Exception {
-        System.out.println("追加前 : " + target.getListCount());
 		追加();
 		TaskWithNameBean actual = target.find(tasks.get(0).getId());
 		TaskWithNameBean expect = new TaskWithNameBean(tasks.get(0), users.get(0).getName(), groups.get(0).getName());
 		expect.setId(actual.getId());
 		assertEquals(expect, actual);
-        System.out.println("追加後 : " + target.getListCount());
 	}
 
 	@Test
@@ -164,7 +162,6 @@ public class TaskTableDaoTest {
 		List<TaskWithNameBean> expect = new ArrayList<TaskWithNameBean>();
 		for (TaskBean task : filtedTasks) {
 			expect.add(new TaskWithNameBean(task, "富山　太郎", "TEST3グループ"));
-			//System.out.println(task.toString());
 		}
 		assertEquals(expect, actual);
 		assertEquals(2, actual.size());
@@ -188,7 +185,6 @@ public class TaskTableDaoTest {
 	@Test
 	void 追加_自動採番() throws Exception {
 		assertTrue(target.create(tasks.get(0)));
-		System.out.println("自動採番ID:" + tasks.get(0).getId());
 		assertNotEquals(0, tasks.get(0).getId());
 		assertTrue(target.create(tasks.get(1)));
 		assertEquals(tasks.get(0).getId() + 1, tasks.get(1).getId());

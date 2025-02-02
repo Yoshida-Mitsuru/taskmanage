@@ -10,7 +10,6 @@
 <title><%= Constants.APP_NAME %></title>
 </head>
 <body>
-<h1><%= Constants.APP_NAME %></h1>
 <h2>グループ情報編集</h2>
   <form action="groupEditSubmit" method="post">
     <label for="id">

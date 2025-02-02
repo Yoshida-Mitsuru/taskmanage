@@ -16,7 +16,6 @@
 </script>
 </head>
 <body>
-<h1><%= Constants.APP_NAME %></h1>
 <h2>グループ一覧</h2>
   <table border="1">
     <tr>
@@ -53,6 +52,5 @@
   <c:if test="${not empty message}">
     <p><c:out value="${message}"/></p>
   </c:if>
-  <a href="mainMenu">戻る</a>
 </body>
 </html>

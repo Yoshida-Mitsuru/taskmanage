@@ -19,14 +19,14 @@
 	<c:choose>
 		<c:when test="${not empty loginUser.id}">
 			<p>ようこそ${loginUser.name}さん</p>
-			<a href="logout">ログアウト</a>
+			<a href="logout" target="_top">ログアウト</a>
 			<br>
-			<a href="Main">つぶやき投稿・閲覧へ</a>
+			<a href="taskList" target="contentFrame">タスク表示</a>
 			<c:if test="${loginUser.admin}">
 				<p>管理者 メニュー</p>
-				<a href="userList">ユーザー管理</a>
+				<a href="userList" target="contentFrame">ユーザー管理</a>
 				<br>
-				<a href="groupList">グループ管理</a>
+				<a href="groupList" target="contentFrame">グループ管理</a>
 				<br>
 			</c:if>
 		</c:when>

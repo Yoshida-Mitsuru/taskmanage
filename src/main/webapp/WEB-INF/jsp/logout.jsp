@@ -9,6 +9,7 @@
 </head>
 </head>
 <body>
+<h1><%= Constants.APP_NAME %></h1>
 <h2>ログアウト</h2>
 <p>ログアウトしました</p>
 <a href="index.jsp" target="_top">トップへ</a>

@@ -14,7 +14,6 @@
 <title><%= Constants.APP_NAME %></title>
 </head>
 <body>
-<h1><%= Constants.APP_NAME %></h1>
 <h2>新規ユーザー追加</h2>
   <form action="userAddSubmit" method="post">
     <label for="id">
